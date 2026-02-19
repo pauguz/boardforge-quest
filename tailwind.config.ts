@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        board: {
+          light: "hsl(var(--board-light))",
+          dark: "hsl(var(--board-dark))",
+        },
+        player1: "hsl(var(--player-1))",
+        player2: "hsl(var(--player-2))",
       },
       borderRadius: {
         lg: "var(--radius)",
