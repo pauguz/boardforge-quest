@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { X } from "lucide-react";
+import { findDirections } from "@/utils/movement";
 
 interface Props {
   pieceTypeId: string | null;
@@ -20,9 +21,9 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
   const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
 
   const [dx, setDx] = useState(0);
-  const [dy, setDy] = useState(1);
+  const [dy, setDy] = useState(0);
   const [moveType, setMoveType] = useState<'unit' | 'range' | 'indefinite'>('unit');
-  const [range, setRange] = useState(3);
+  const [range, setRange] = useState(2);
   const [rotate, setRotate] = useState(false);
 
   if (!pieceType) return null;
@@ -33,6 +34,7 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
       direction: { dx, dy }, type: moveType,
       ...(moveType === 'range' ? { range } : {}), rotate,
     };
+    if ( findDirections(pieceType, rule.direction) ) return;
     updatePieceType(pieceType.id, { movements: [...pieceType.movements, rule] });
   };
 
@@ -80,7 +82,7 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
         <Separator />
 
         <div className="space-y-3">
-          <p className="text-sm font-medium">Agregar dirección</p>
+          <p className="text-sm font-medium">Definir dirección</p>
           <div className="flex gap-2 items-end">
             <div>
               <label className="text-xs text-muted-foreground">X (horizontal)</label>

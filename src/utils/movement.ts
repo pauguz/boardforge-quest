@@ -17,6 +17,15 @@ export function getRotations(dx: number, dy: number): Direction[] {
   return results;
 }
 
+export function findDirections(pt: PieceType, dir:Direction): boolean{
+  let ret=false;
+  for (const n of pt.movements){
+    ret = ret || (n.direction.dx===dir.dx && n.direction.dy===dir.dy)
+    if (ret) break;
+  }
+  return ret
+}
+
 export function getValidMoves(
   piece: BoardPiece,
   pieceType: PieceType,
