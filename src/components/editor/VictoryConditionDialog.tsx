@@ -76,7 +76,7 @@ export function VictoryConditionDialog({ open, onOpenChange }: Props) {
             <Button variant={mode === 'arrival' ? 'default' : 'outline'} size="sm"
               onClick={() => setMode('arrival')}>Llegada</Button>
             <Button variant={mode === 'capture' ? 'default' : 'outline'} size="sm"
-              onClick={() => setMode('capture')}>Captura (extinción)</Button>
+              onClick={() => setMode('capture')}>Extinción</Button>
           </div>
 
           <Select value={pieceTypeId} onValueChange={setPieceTypeId}>
