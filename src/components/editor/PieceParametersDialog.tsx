@@ -61,23 +61,43 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Movimientos</p>
-          {pieceType.movements.length === 0 && (
-            <p className="text-xs text-muted-foreground">Sin movimientos configurados</p>
-          )}
-          {pieceType.movements.map((m, i) => (
-            <div key={i} className="flex items-center gap-2 p-2 bg-secondary rounded text-sm flex-wrap">
-              <span className="font-mono">({m.direction.dx}, {m.direction.dy})</span>
-              <Badge variant="secondary">{typeLabel(m.type, m.range)}</Badge>
-              {m.rotate && <Badge variant="outline">Rotado</Badge>}
-              <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto"
-                onClick={() => removeMovement(i)}>
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Movimientos</p>
+
+        {pieceType.movements.length === 0 ? (
+          <p className="text-xs text-muted-foreground">
+            Sin movimientos configurados
+          </p>
+        ) : (
+          pieceType.movements.map((m, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 p-2 bg-secondary rounded text-sm flex-wrap"
+            >
+              <span className="font-mono">
+                ({m.direction.dx}, {m.direction.dy})
+              </span>
+
+              <Badge variant="secondary">
+                {typeLabel(m.type, m.range)}
+              </Badge>
+
+              {m.rotate ? (
+                <Badge variant="outline">Rotado</Badge>
+              ) : null}
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 ml-auto"
+                onClick={() => removeMovement(i)}
+              >
                 <X className="w-3 h-3" />
               </Button>
             </div>
-          ))}
-        </div>
+          ))
+        )}
+      </div>
 
         <Separator />
 
