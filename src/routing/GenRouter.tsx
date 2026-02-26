@@ -4,6 +4,7 @@ import Editor from "../pages/Editor";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
 import Testing from '@/pages/testing';
+//import Testing from '@/pages/testing';
 
 const GenRouter = () => {
   return (
@@ -12,6 +13,7 @@ const GenRouter = () => {
       <Route path="/" element={<Index />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/ayuda" element={<Ayuda />}/>
+      {/* <---    <Route path="/testing" element={<Testing />} /> */}
       <Route path="*" element={<NotFound />} />
 
     </Routes>
