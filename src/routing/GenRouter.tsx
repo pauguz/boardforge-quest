@@ -3,7 +3,6 @@ import Index from "../pages/Index";
 import Editor from "../pages/Editor";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
-import Testing from '@/pages/testing';
 //import Testing from '@/pages/testing';
 
 const GenRouter = () => {
