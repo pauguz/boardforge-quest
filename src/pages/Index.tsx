@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@radix-ui/react-select";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -11,9 +12,15 @@ const Index = () => {
       <p className="text-muted-foreground text-lg mb-10">
         Crea tus propios juegos de mesa de estrategia
       </p>
-      <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/editor')}>
-        Crear Juego
-      </Button>
+      <div className="flex flex-col gap-4">
+        <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/editor')}>
+          Crear Juego
+        </Button>
+
+        <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/ayuda')}>
+          Ayuda
+        </Button>
+      </div>
     </div>
   );
 };

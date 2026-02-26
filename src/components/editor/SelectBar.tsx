@@ -8,10 +8,10 @@ const SelectBar = () => {
     const navigate =useNavigate()
 
   return (
-    <div style={{display:'flex', alignItems: 'stretch'}}>
+    <div style={{display:'flex'}}>
         <LogoReturn/>
         <div className="h-5 w-px bg-border" />
-        <TabEntry/>
+        <TabEntry isActive={true}/>
         <div className="h-5 w-px bg-border" />
         <TabCreator/>
     </div>
