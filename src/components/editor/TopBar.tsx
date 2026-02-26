@@ -31,12 +31,7 @@ export function TopBar() {
 
   return (
     <>
-      <div className="flex items-center gap-3 px-4 py-2 border-b border-border bg-card shrink-0 flex-wrap">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-          Board<span className="text-primary">Forge</span>
-        </Button>
-
-        <div className="h-5 w-px bg-border" />
+      <div className="flex items-center gap-3 px-4 py-2 border-b border-border bg-card shrink-0 flex-wrap" >
 
         <div className="flex items-center gap-1.5 text-sm">
           <span className="text-muted-foreground">Filas</span>
