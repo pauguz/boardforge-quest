@@ -5,7 +5,7 @@ export function exportGameAsHTML(
   boardCols: number,
   pieceTypes: PieceType[],
   pieces: BoardPiece[],
-  victoryConditions: VictoryCondition[]
+  victoryConditions: VictoryCondition[][]
 ): string {
   const gameData = JSON.stringify({
     boardRows, boardCols,
@@ -82,16 +82,13 @@ const adj=S.pieces.find(p=>p.row===ar&&p.col===ac);
 if(adj&&adj.player!==pl){const opp=S.pieces.find(p=>p.row===ar+d.dy&&p.col===ac+d.dx);
 if(opp&&opp.player===pl)c.push({row:ar,col:ac})}}return c;
 }
-function chkWin(){
-for(const vc of G.victoryConditions){
+function chkWin(turn){
+for(const vc of G.victoryConditions[turn-1]){
 if(vc.mode==='arrival'&&vc.targetCells){
-for(const p of S.pieces)if(p.pieceTypeId===vc.pieceTypeId&&vc.targetCells.some(t=>t.row===p.row&&t.col===p.col))return p.player;
-}else if(vc.mode==='capture'){
-for(const pl of[1,2]){
-if(!S.init.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))continue;
-if(!S.pieces.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))return pl===1?2:1;
-}}}return null;
-}
+for(const p of S.pieces)
+if(p.pieceTypeId===vc.pieceTypeId&&vc.targetCells.some(t=>t.row===p.row&&t.col===p.col&&p.player==turn ))return p.player;} 
+else if(vc.mode==='capture'){for(const pl of[1,2]){if(!S.init.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))continue; if(!S.pieces.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))return pl===1?2:1;}}
+}return null;}
 function click(r,c){
 if(S.winner)return;
 if(S.sel&&S.vm.some(m=>m.row===r&&m.col===c)){
@@ -101,7 +98,7 @@ S.pieces=S.pieces.filter(p=>!(p.row===S.sel.row&&p.col===S.sel.col));
 if(pt.captureMode==='indian')S.pieces=S.pieces.filter(p=>!(p.row===r&&p.col===c));
 mp.row=r;mp.col=c;S.pieces.push(mp);
 if(pt.captureMode==='european'){const ec=euroCaps({row:r,col:c},S.turn);S.pieces=S.pieces.filter(p=>!ec.some(e=>e.row===p.row&&e.col===p.col))}
-const w=chkWin();
+const w=chkWin(S.turn);
 if(w){S.winner=w;document.getElementById('winner').textContent='¡Jugador '+w+' ha ganado!';document.getElementById('restart').style.display='block'}
 S.turn=S.turn===1?2:1;S.sel=null;S.vm=[];
 }else{

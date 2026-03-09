@@ -96,13 +96,14 @@ export function getEuropeanCaptures(
 export function checkVictory(
   currentPieces: BoardPiece[],
   initialPieces: BoardPiece[],
-  conditions: VictoryCondition[]
+  conditions: VictoryCondition[],
+  plyr: number
 ): number | null {
   for (const vc of conditions) {
     if (vc.mode === 'arrival' && vc.targetCells) {
       for (const p of currentPieces) {
         if (p.pieceTypeId === vc.pieceTypeId) {
-          if (vc.targetCells.some(t => t.row === p.row && t.col === p.col)) {
+          if (vc.targetCells.some(t => t.row === p.row && t.col === p.col && p.player===plyr+1)) {
             return p.player;
           }
         }

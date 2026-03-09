@@ -5,9 +5,7 @@ import { useNavigate } from "react-router-dom";
 const LogoReturn = () => {
     const navigate =useNavigate()
   return (
-    <Button variant="ghost" size="sm" onClick={() => navigate('/')} 
-    style={{} } //quita el color cuando termines
-    >
+    <Button variant="ghost" size="sm" onClick={() => navigate('/')}   >
         Board<span className="text-primary">Forge</span>
   </Button>
   )

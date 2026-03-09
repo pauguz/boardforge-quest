@@ -6,14 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { PlayerSwitch } from "../ui/mini/player-switch";
 import { X } from "lucide-react";
 
 interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  plyr:number;
 }
 
-export function VictoryConditionDialog({ open, onOpenChange }: Props) {
+export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   const {
     boardRows, boardCols, pieceTypes,
     victoryConditions, addVictoryCondition, removeVictoryCondition,
@@ -22,6 +24,7 @@ export function VictoryConditionDialog({ open, onOpenChange }: Props) {
   const [mode, setMode] = useState<'arrival' | 'capture'>('capture');
   const [pieceTypeId, setPieceTypeId] = useState('');
   const [targetCells, setTargetCells] = useState<Position[]>([]);
+  const [player, setPlayer] = useState(plyr);
 
   const toggleCell = (row: number, col: number) => {
     setTargetCells(prev => {
@@ -36,7 +39,7 @@ export function VictoryConditionDialog({ open, onOpenChange }: Props) {
       mode, pieceTypeId,
       ...(mode === 'arrival' ? { targetCells: [...targetCells] } : {}),
     };
-    addVictoryCondition(vc);
+    addVictoryCondition(vc, player-1);
     setTargetCells([]);
     setPieceTypeId('');
   };
@@ -48,18 +51,19 @@ export function VictoryConditionDialog({ open, onOpenChange }: Props) {
       <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Condiciones de Victoria</DialogTitle>
+          <PlayerSwitch blocking={!open} change={setPlayer} plyr={player}/>
         </DialogHeader>
 
-        {victoryConditions.length > 0 && (
+        {victoryConditions[player-1].length > 0 && (
           <div className="space-y-1">
-            {victoryConditions.map((vc, i) => (
+            {victoryConditions[player-1].map((vc, i) => (
               <div key={i} className="flex items-center justify-between p-2 bg-secondary rounded text-sm">
                 <span>
                   {vc.mode === 'arrival' ? '🏁 Llegada' : '⚔️ Captura'}:{' '}
                   {pieceTypes.find(pt => pt.id === vc.pieceTypeId)?.name || '?'}
                   {vc.targetCells && ` (${vc.targetCells.length} casillas)`}
                 </span>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeVictoryCondition(i)}>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(player-1, i) }}>
                   <X className="w-3 h-3" />
                 </Button>
               </div>

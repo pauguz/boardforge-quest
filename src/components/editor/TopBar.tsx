@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { VictoryConditionDialog } from "./VictoryConditionDialog";
 import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy } from "lucide-react";
+import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
 
 export function TopBar() {
@@ -46,13 +47,7 @@ export function TopBar() {
 
         <div className="h-5 w-px bg-border" />
 
-        <div className="flex items-center gap-2 text-sm">
-          <span className={currentPlayer === 1 ? "text-player1 font-semibold" : "text-muted-foreground"}>J1</span>
-          <Switch checked={currentPlayer === 2}
-            onCheckedChange={v => setCurrentPlayer(v ? 2 : 1)}
-            disabled={isPlaying} />
-          <span className={currentPlayer === 2 ? "text-player2 font-semibold" : "text-muted-foreground"}>J2</span>
-        </div>
+        <PlayerSwitch blocking={isPlaying} change={setCurrentPlayer} plyr={currentPlayer} />
 
         <div className="h-5 w-px bg-border" />
 
@@ -85,7 +80,7 @@ export function TopBar() {
           </div>
         )}
       </div>
-      <VictoryConditionDialog open={showVictory} onOpenChange={setShowVictory} />
+      <VictoryConditionDialog open={showVictory} onOpenChange={setShowVictory} plyr={currentPlayer}/>
     </>
   );
 }

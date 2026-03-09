@@ -26,9 +26,9 @@ interface GameEditorContextType {
   setSelectedPieceTypeId: (id: string | null) => void;
   currentPlayer: 1 | 2;
   setCurrentPlayer: (p: 1 | 2) => void;
-  victoryConditions: VictoryCondition[];
-  addVictoryCondition: (vc: VictoryCondition) => void;
-  removeVictoryCondition: (i: number) => void;
+  victoryConditions: VictoryCondition[][];
+  addVictoryCondition: (vc: VictoryCondition, j:number) => void;
+  removeVictoryCondition: (j:number, i: number) => void;
   isPlaying: boolean;
   playState: PlayState | null;
   startGame: () => void;
@@ -51,7 +51,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);
   const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
-  const [victoryConditions, setVictoryConditions] = useState<VictoryCondition[]>([]);
+  const [victoryConditions, setVictoryConditions] = useState<VictoryCondition[][]>([[],[]]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playState, setPlayState] = useState<PlayState | null>(null);
 
@@ -70,13 +70,27 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
     setBoardPieces(prev => prev.filter(bp => bp.pieceTypeId !== id));
   }, []);
 
-  const addVictoryCondition = useCallback((vc: VictoryCondition) => {
-    setVictoryConditions(prev => [...prev, vc]);
-  }, []);
-
-  const removeVictoryCondition = useCallback((i: number) => {
-    setVictoryConditions(prev => prev.filter((_, idx) => idx !== i));
-  }, []);
+  const addVictoryCondition = useCallback(
+    (vc: VictoryCondition, j: number) => {
+      setVictoryConditions(prev =>
+        prev.map((group, index) => index === j ? [...group, vc] : group)
+      );
+    },
+    []
+  );
+  
+  const removeVictoryCondition = useCallback(
+    (i: number, j: number) => {
+      setVictoryConditions(prev =>
+        prev.map((group, index) =>
+          index === j
+            ? group.filter((_, idx) => idx !== i)
+            : group
+        )
+      );
+    },
+    []
+  );
 
   const startGame = useCallback(() => {
     setIsPlaying(true);
@@ -117,7 +131,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
         newPieces = newPieces.filter(p => !ec.some(c => c.row === p.row && c.col === p.col));
       }
 
-      const winner = checkVictory(newPieces, playState.initialPieces, victoryConditions);
+      const winner = checkVictory(newPieces, playState.initialPieces, victoryConditions[turn-1], turn-1);
       setPlayState({
         ...playState, pieces: newPieces, turn: turn === 1 ? 2 : 1,
         selected: null, validMoves: [], winner,

@@ -1,15 +1,12 @@
 import { useState, useRef } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import {
-  ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,
-} from "@/components/ui/context-menu";
-import { PieceParametersDialog } from "./PieceParametersDialog";
-import { PieceTestDialog } from "./PieceTestDialog";
-import { Plus, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CreatePieceDialog } from "./Dialogs/CreatePieceDialog";
+import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} from "@/components/ui/context-menu";
+import { PieceParametersDialog } from "./Dialogs/PieceParametersDialog";
+import { PieceTestDialog } from "./Dialogs/PieceTestDialog";
+import { Plus } from "lucide-react";
+import PieceItem from "./PieceItem";
 
 export function PieceSidebar() {
   const {
@@ -19,7 +16,6 @@ export function PieceSidebar() {
 
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [pendingImage, setPendingImage] = useState<string | null>(null);
-  const [newName, setNewName] = useState('');
   const [paramsId, setParamsId] = useState<string | null>(null);
   const [testId, setTestId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -36,12 +32,11 @@ export function PieceSidebar() {
     e.target.value = '';
   };
 
-  const handleCreate = () => {
-    if (pendingImage && newName.trim()) {
-      addPieceType(newName.trim(), pendingImage);
+  const handleCreate = (name:string) => {
+    if (pendingImage) {
+      addPieceType(name, pendingImage);
       setShowNameDialog(false);
       setPendingImage(null);
-      setNewName('');
     }
   };
 
@@ -60,29 +55,15 @@ export function PieceSidebar() {
         {pieceTypes.map(pt => (
           <ContextMenu key={pt.id}>
             <ContextMenuTrigger>
-              <div
-                onDoubleClick={() => !isPlaying && setSelectedPieceTypeId(pt.id)}
-                className={cn(
-                  "flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors",
-                  selectedPieceTypeId === pt.id && "bg-accent ring-1 ring-primary"
-                )}
-              >
-                <img src={pt.imageUrl} alt={pt.name} className="w-8 h-8 object-contain rounded" />
-                <span className="text-sm truncate flex-1">{pt.name}</span>
-                {!isPlaying && (
-                  <Button variant="ghost" size="icon" className="h-6 w-6 opacity-50 hover:opacity-100"
-                    onClick={e => { e.stopPropagation(); removePieceType(pt.id); }}>
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                )}
-              </div>
+              <PieceItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeId} selection={setSelectedPieceTypeId} /> 
+
             </ContextMenuTrigger>
             <ContextMenuContent>
               <ContextMenuItem onClick={() => setParamsId(pt.id)}>Parámetros</ContextMenuItem>
               <ContextMenuItem onClick={() => setTestId(pt.id)}>Pruebas</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
-        ))}
+        ))  }
         {pieceTypes.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-8">
             Agrega fichas con el botón +
@@ -100,22 +81,11 @@ export function PieceSidebar() {
         </div>
       )}
 
-      <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Nombre de la ficha</DialogTitle></DialogHeader>
-          {pendingImage && (
-            <div className="flex justify-center">
-              <img src={pendingImage} alt="preview" className="w-16 h-16 object-contain rounded" />
-            </div>
-          )}
-          <Input value={newName} onChange={e => setNewName(e.target.value)}
-            placeholder="Ej: Rey, Peón, Torre..." autoFocus
-            onKeyDown={e => e.key === 'Enter' && handleCreate()} />
-          <DialogFooter>
-            <Button onClick={handleCreate} disabled={!newName.trim()}>Crear</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+    <CreatePieceDialog open={showNameDialog} 
+            onOpenChange={setShowNameDialog}
+            imageUrl={pendingImage}
+            onConfirm={handleCreate}
+          />
 
       <PieceParametersDialog pieceTypeId={paramsId} open={!!paramsId} onOpenChange={v => !v && setParamsId(null)} />
       <PieceTestDialog pieceTypeId={testId} open={!!testId} onOpenChange={v => !v && setTestId(null)} />

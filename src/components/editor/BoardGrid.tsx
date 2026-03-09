@@ -26,7 +26,7 @@ export function BoardGrid() {
   const pieces = isPlaying && playState ? playState.pieces : boardPieces;
   const validMoves = playState?.validMoves || [];
   const selected = playState?.selected;
-  const targetCells = victoryConditions
+  const targetCells = victoryConditions.flat()
     .filter(vc => vc.mode === 'arrival' && vc.targetCells)
     .flatMap(vc => vc.targetCells!);
 

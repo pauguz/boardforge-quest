@@ -6,7 +6,7 @@ interface TabEntryProps {
   func: any;
 }
 
-const TabEntry = ({ title='Bob', isActive = false, func= dummy}: TabEntryProps) => {
+const TabEntry = ({ isActive = false, func= dummy,  title='Bob'}: TabEntryProps) => {
   return (
       <div 
         onClick={func} 
