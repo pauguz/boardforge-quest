@@ -131,7 +131,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
         newPieces = newPieces.filter(p => !ec.some(c => c.row === p.row && c.col === p.col));
       }
 
-      const winner = checkVictory(newPieces, playState.initialPieces, victoryConditions[turn-1], turn-1);
+      const winner = checkVictory(newPieces, playState.initialPieces, victoryConditions[turn-1], turn);
       setPlayState({
         ...playState, pieces: newPieces, turn: turn === 1 ? 2 : 1,
         selected: null, validMoves: [], winner,

@@ -103,7 +103,7 @@ export function checkVictory(
     if (vc.mode === 'arrival' && vc.targetCells) {
       for (const p of currentPieces) {
         if (p.pieceTypeId === vc.pieceTypeId) {
-          if (vc.targetCells.some(t => t.row === p.row && t.col === p.col && p.player===plyr+1)) {
+          if (vc.targetCells.some(t => t.row === p.row && t.col === p.col && p.player===plyr)) {
             return p.player;
           }
         }

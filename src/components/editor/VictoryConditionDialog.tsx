@@ -63,7 +63,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
                   {pieceTypes.find(pt => pt.id === vc.pieceTypeId)?.name || '?'}
                   {vc.targetCells && ` (${vc.targetCells.length} casillas)`}
                 </span>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(player-1, i) }}>
+              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(i, player-1) }}>
                   <X className="w-3 h-3" />
                 </Button>
               </div>

@@ -75,7 +75,7 @@ export function PieceSidebar() {
         <div className="p-2 border-t border-border text-xs text-muted-foreground text-center">
           Seleccionada: {pieceTypes.find(pt => pt.id === selectedPieceTypeId)?.name}
           <Button variant="link" size="sm" className="text-xs ml-1"
-            onClick={() => setSelectedPieceTypeId(null)}>
+            onClick={() => {setSelectedPieceTypeId(null), console.log(pieceTypes)}}>
             Deseleccionar
           </Button>
         </div>
