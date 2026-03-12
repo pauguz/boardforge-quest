@@ -3,17 +3,18 @@ import Index from "../pages/Index";
 import Editor from "../pages/Editor";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
-import DownloadPage from '@/pages/downloadPage';
-import EditRouter from './EditRouter';
+//import Testing from '@/pages/testing';
 
 const GenRouter = () => {
   return (
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<Index />} />
-      <Route path="/editor/*" element={<EditRouter />} />
+      <Route path="/editor" element={<Editor />} />
       <Route path="/ayuda" element={<Ayuda />}/>
+      {/* <---    <Route path="/testing" element={<Testing />} /> */}
       <Route path="*" element={<NotFound />} />
+
     </Routes>
   </BrowserRouter>
   )
