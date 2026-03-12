@@ -1,4 +1,4 @@
-
+import { title } from "process";
 import { dummy } from "@/utils/dummy";
 interface TabEntryProps {
   title: string;
@@ -35,6 +35,6 @@ const TabEntry = ({ isActive = false, func= dummy,  title='Bob'}: TabEntryProps)
 };
 
 const TabCreator= ()=>{
-  return <TabEntry title="+" func={() => {}}/>
+  return <TabEntry title="+"/>
 }
 export {TabEntry, TabCreator}
