@@ -1,4 +1,4 @@
-import { title } from "process";
+
 import { dummy } from "@/utils/dummy";
 interface TabEntryProps {
   title: string;
