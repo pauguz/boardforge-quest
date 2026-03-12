@@ -8,8 +8,9 @@ const OptionSideBar = () => {
   const {isPlaying} = useGameEditor();
   const [SelectedMenuId, setSelectedMenuId]=useState(null);
   const sections: menuType[] = [
-    { id: 'Fichas', imageUrl:'' , name: ''},
-    { id: 'Victoria', imageUrl:'', name:''}
+    { id: '', imageUrl:'', name: 'Fichas'},
+    { id: '', imageUrl:'', name: 'Victoria'},
+    { id: '', imageUrl:'', name: 'Donaciones'},
   ];
 
   return (

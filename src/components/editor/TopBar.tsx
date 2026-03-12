@@ -19,16 +19,6 @@ export function TopBar() {
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();
 
-  const handleDownload = () => {
-    const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'juego-de-mesa.html';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <>
@@ -65,7 +55,7 @@ export function TopBar() {
           </Button>
         )}
 
-        <Button variant="outline" size="sm" onClick={handleDownload} disabled={boardPieces.length === 0 || isPlaying}>
+        <Button variant="outline" size="sm" onClick={() => window.open("/editor/download", "_blank", "noopener,noreferrer") } disabled={boardPieces.length === 0 || isPlaying}>
           <Download className="w-4 h-4 mr-1" /> Descargar
         </Button>
 
