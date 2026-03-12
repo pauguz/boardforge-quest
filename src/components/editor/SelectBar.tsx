@@ -11,7 +11,7 @@ const SelectBar = () => {
     <div style={{display:'flex'}}>
         <LogoReturn/>
         <div className="h-5 w-px bg-border" />
-        <TabEntry isActive={true}/>
+        <TabEntry isActive={true} title="Principal" func={() => {}}/>
         <div className="h-5 w-px bg-border" />
         <TabCreator/>
     </div>
