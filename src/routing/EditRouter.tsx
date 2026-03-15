@@ -10,7 +10,6 @@ const EditRouter = () => {
         <Routes>
         <Route path="/" element={<Editor />} />
         <Route path="download" element={<DownloadPage/>} />
-
         </Routes>
     </GameEditorProvider>
 
