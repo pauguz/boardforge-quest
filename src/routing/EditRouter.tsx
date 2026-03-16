@@ -1,5 +1,5 @@
 import { GameEditorProvider } from '@/context/GameEditorContext'
-import DownloadPage from '@/pages/downloadPage'
+import TransitionPage from '@/pages/transitionPage'
 import Editor from '@/pages/Editor'
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
@@ -9,7 +9,7 @@ const EditRouter = () => {
     <GameEditorProvider>
         <Routes>
         <Route path="/" element={<Editor />} />
-        <Route path="download" element={<DownloadPage/>} />
+        <Route path="download" element={<TransitionPage/>} />
         </Routes>
     </GameEditorProvider>
 

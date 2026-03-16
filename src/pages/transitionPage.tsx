@@ -2,7 +2,7 @@ import { GameEditorProvider, useGameEditor } from '@/context/GameEditorContext';
 import { exportGameAsHTML } from '@/utils/gameExport';
 import React, { useEffect, useState } from 'react'
 
-const DownloadPage = () => {
+const TransitionPage = () => {
     const [seconds, setSeconds] = useState(10);
     const {
             boardRows, boardCols, 
@@ -48,4 +48,4 @@ const DownloadPage = () => {
     );
 }
 
-export default DownloadPage;
+export default TransitionPage;

@@ -6,7 +6,7 @@ import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} f
 import { PieceParametersDialog } from "./Dialogs/PieceParametersDialog";
 import { PieceTestDialog } from "./Dialogs/PieceTestDialog";
 import { Plus } from "lucide-react";
-import PieceItem from "./PieceItem";
+import SideItem from "./SideItem";
 
 export function PieceSidebar() {
   const {
@@ -55,7 +55,7 @@ export function PieceSidebar() {
         {pieceTypes.map(pt => (
           <ContextMenu key={pt.id}>
             <ContextMenuTrigger>
-              <PieceItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeId} selection={setSelectedPieceTypeId} /> 
+              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeId} selection={setSelectedPieceTypeId} /> 
 
             </ContextMenuTrigger>
             <ContextMenuContent>

@@ -1,9 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Index from "../pages/Index";
-import Editor from "../pages/Editor";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
-import DownloadPage from '@/pages/downloadPage';
 import EditRouter from './EditRouter';
 
 const GenRouter = () => {

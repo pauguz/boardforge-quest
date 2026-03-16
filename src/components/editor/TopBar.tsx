@@ -3,9 +3,9 @@ import { useGameEditor } from "@/context/GameEditorContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { VictoryConditionDialog } from "./VictoryConditionDialog";
+import { VictoryConditionDialog } from "./SideEditor/VictoryConditionDialog";
 import { exportGameAsHTML } from "@/utils/gameExport";
-import { Play, Square, Download, Trophy } from "lucide-react";
+import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
 
@@ -67,6 +67,12 @@ export function TopBar() {
         }} disabled={boardPieces.length === 0 || isPlaying}>
           <Download className="w-4 h-4 mr-1" /> Descargar
         </Button>
+
+        <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}>
+            <Share2 className="w-4 h-4 mr-1" /> Compartir
+        </Button>
+
+
 
         {isPlaying && playState && (
           <div className="ml-auto text-sm font-medium">

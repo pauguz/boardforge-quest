@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 src/pages/testing.tsx
 .env.development
+src/pages/LudiSala.tsx
