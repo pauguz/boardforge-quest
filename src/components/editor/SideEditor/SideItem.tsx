@@ -20,7 +20,7 @@ const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: Side
 
   return (
     <div
-      onDoubleClick={() => !bloqueo && selection(gen.id)}
+      onClick={() => !bloqueo && selection(gen.id)}
       className={cn(
         "flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors",
         selectedID === gen.id && "bg-accent ring-1 ring-primary"

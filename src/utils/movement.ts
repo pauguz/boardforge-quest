@@ -26,6 +26,63 @@ export function findDirections(pt: PieceType, dir:Direction): boolean{
   return ret
 }
 
+type SmartArray<T> = T extends Array<infer U> 
+  ? Array<SmartArray<U>> 
+  : T;
+
+/**
+ * Crea un Proxy que permite aritmética de índices negativos (estilo Python).
+ * Soporta lectura y escritura recursiva.
+ */
+export function createSmartArray<T>(arr: T[]): SmartArray<T> {
+  return new Proxy(arr, {
+    get(target, prop, receiver) {
+      // 1. Si no es un índice numérico (ej: 'map', 'length', 'push'), usamos el original
+      if (typeof prop === 'symbol' || isNaN(Number(prop))) {
+        const value = Reflect.get(target, prop, receiver);
+        // Si el valor es una función, debemos bindearla al target original
+        return typeof value === 'function' ? value.bind(target) : value;
+      }
+
+      let index = Number(prop);
+      if (index < 0 || index>=target.length) index %= target.length;
+
+      const value = target[index];
+
+      // 2. Recursividad para arrays anidados
+      if (Array.isArray(value)) {
+        return createSmartArray(value);
+      }
+
+      return value;
+    },
+
+    set(target, prop, value): boolean {
+      // Si no es un índice numérico, seteo normal
+      if (typeof prop === 'symbol' || isNaN(Number(prop))) {
+        return Reflect.set(target, prop, value);
+      }
+
+      let index = Number(prop);
+      if (index < 0 || index>=target.length) index %= target.length;
+
+      target[index] = value;
+      if (Array.isArray(value)) {
+        return createSmartArray(value);
+      }
+
+      return true;
+    }
+  }) as unknown as SmartArray<T>;
+}
+
+
+
+export function polarCoordinates(arr:number[][], dim: number[]){
+  const ret=arr.map(dup =>{return dup});
+  return ret;
+}
+
 export function getValidMoves(
   piece: BoardPiece,
   pieceType: PieceType,
