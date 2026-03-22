@@ -1,8 +1,11 @@
+import { useGeneralEditor } from '@/context/GeneralEditorContext';
 import React from 'react'
 import { useState } from 'react';
 
 const InternalSideBar = ({menu:string}) => {
-  const [menu, setMenu]=useState(null);
+    const {
+      selectedMenuId, setSelectedMenuId
+    } = useGeneralEditor();
     const handleChange = () => {
     
       };
