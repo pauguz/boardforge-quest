@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
-import LudiSala from '@/pages/LudiSala';
 import Editor from '@/pages/Editor';
 
 
