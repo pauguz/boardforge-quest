@@ -23,7 +23,7 @@ const OptionSideBar = () => {
     <div  className="flex flex-col">
       <div className="flex flex-1 flex-col p-2 justify-around">
       {sections.map(sec => (
-          <SideItem gen={sec} bloqueo={isPlaying} selectedID={selectedMenuId} selection={setSelectedMenuId} /> 
+          <SideItem key={sec.id} gen={sec} bloqueo={isPlaying} selectedID={selectedMenuId} selection={setSelectedMenuId} /> 
         ))  }
       </div>
     </div>
