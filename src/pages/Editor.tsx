@@ -14,7 +14,7 @@ const Editor = () => (
             <TopBar />
             <div className="flex flex-1 overflow-hidden">
               <Board />
-              <InternalSideBar/>
+              <PieceSidebar/>
               <OptionSideBar/>
             </div>
           </GameEditorProvider>
