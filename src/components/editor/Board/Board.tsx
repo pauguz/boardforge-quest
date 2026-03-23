@@ -1,5 +1,5 @@
 import React from 'react'
-import { BoardGrid } from '../BoardGrid'
+import { BoardGrid } from './BoardGrid'
 
 const Board = () => {
   return (

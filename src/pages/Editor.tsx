@@ -3,15 +3,22 @@ import { PieceSidebar } from "@/components/editor/SideEditor/PieceSidebar";
 import SelectBar from "@/components/editor/SelectBar";
 import OptionSideBar from "@/components/editor/SideEditor/OptionSideBar";
 import Board from "@/components/editor/Board/Board";
+import GeneralEditorProvider from "@/context/GeneralEditorContext";
+import { GameEditorProvider } from "@/context/GameEditorContext";
 const Editor = () => (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
-      <SelectBar/>
-      <TopBar />
-      <div className="flex flex-1 overflow-hidden">
-        <Board />
-        <PieceSidebar />
-        <OptionSideBar/>
-      </div>
+      <GeneralEditorProvider>
+          <SelectBar/>
+          <GameEditorProvider>
+            <TopBar />
+            <div className="flex flex-1 overflow-hidden">
+              <Board />
+              <PieceSidebar />
+              <OptionSideBar/>
+            </div>
+          </GameEditorProvider>
+
+      </GeneralEditorProvider>
     </div>
 );
 
