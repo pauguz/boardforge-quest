@@ -18,7 +18,7 @@ const InternalSideBar = () => {
     const Render= BARS[selectedMenuId] || PieceSidebar;
 
   return (
-    <Render/>
+    <Render key={selectedMenuId} />
   )
 }
 
