@@ -5,7 +5,7 @@ import OptionSideBar from "@/components/editor/SideEditor/OptionSideBar";
 import Board from "@/components/editor/Board/Board";
 import GeneralEditorProvider from "@/context/GeneralEditorContext";
 import { GameEditorProvider } from "@/context/GameEditorContext";
-//import InternalSideBar from "@/components/editor/SideEditor/InternalSideBar";
+import InternalSideBar from "@/components/editor/SideEditor/InternalSideBar";
 const Editor = () => (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       <GeneralEditorProvider>
@@ -14,7 +14,7 @@ const Editor = () => (
             <TopBar />
             <div className="flex flex-1 overflow-hidden">
               <Board />
-              <PieceSidebar/>
+              <InternalSideBar/>
               <OptionSideBar/>
             </div>
           </GameEditorProvider>

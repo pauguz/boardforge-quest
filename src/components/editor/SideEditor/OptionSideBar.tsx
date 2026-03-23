@@ -1,5 +1,3 @@
-import React, { useState } from 'react'
-import { Sidebar, SidebarProvider } from '../../ui/sidebar.tsx'
 import SideItem from './SideItem.tsx'
 import {LucideIcon, Trophy, DollarSign, ChessPawn, UsersIcon, Grid2X2 } from 'lucide-react'
 import {menuType} from '../../../types/menu.ts'
