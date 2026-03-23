@@ -8,6 +8,7 @@ import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
+import { generateRoomId } from "@/utils/roomId";
 
 export function TopBar() {
   const {
@@ -18,7 +19,10 @@ export function TopBar() {
   } = useGameEditor();
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();
-
+  const createRoom = () => {
+      const id = generateRoomId();
+      navigate(`/room/${id}`);
+    };
 
   return (
     <>

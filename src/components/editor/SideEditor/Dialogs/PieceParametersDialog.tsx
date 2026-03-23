@@ -22,7 +22,7 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
 
   const [dx, setDx] = useState(0);
   const [dy, setDy] = useState(0);
-  const [moveType, setMoveType] = useState<'unit' | 'range' | 'indefinite'>('unit');
+  const [moveType, setMoveType] = useState<'range' | 'indefinite'>('range');
   const [range, setRange] = useState(2);
   const [rotate, setRotate] = useState(false);
 
@@ -49,7 +49,7 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
   };
 
   const typeLabel = (t: string, r?: number) =>
-    t === 'unit' ? 'Unitario' : t === 'range' ? `Rango ${r}` : 'Indefinido';
+    t === 'range' ? `Rango ${r}` : 'Indefinido';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -115,8 +115,6 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
           </div>
 
           <div className="flex gap-1.5 flex-wrap">
-            <Button variant={moveType === 'unit' ? 'default' : 'outline'} size="sm"
-              onClick={() => setMoveType('unit')}>Unitario</Button>
             <Button variant={moveType === 'range' ? 'default' : 'outline'} size="sm"
               onClick={() => setMoveType('range')}>En rango</Button>
             <Button variant={moveType === 'indefinite' ? 'default' : 'outline'} size="sm"

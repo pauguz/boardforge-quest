@@ -28,7 +28,7 @@ export function useGeneralEditor() {
 const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
     const [status, setStatus] = useState<1|2|3>(1);
     const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
-    const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
+    const [selectedMenuId, setSelectedMenuId] = useState<string | null>('1');
     const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
 
     
