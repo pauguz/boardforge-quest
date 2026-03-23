@@ -22,7 +22,7 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
 
   const [dx, setDx] = useState(0);
   const [dy, setDy] = useState(0);
-  const [moveType, setMoveType] = useState<'range' | 'indefinite'>('range');
+  const [moveType, setMoveType] = useState<'unit' |'range' | 'indefinite'>('range');
   const [range, setRange] = useState(2);
   const [rotate, setRotate] = useState(false);
 

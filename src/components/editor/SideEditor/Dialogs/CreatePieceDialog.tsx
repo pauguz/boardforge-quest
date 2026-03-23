@@ -37,7 +37,6 @@ export function CreatePieceDialog({ open, onOpenChange, imageUrl, onConfirm }: C
             <img src={imageUrl} alt="preview" className="w-16 h-16 object-contain rounded" />
           </div>
         )}
-
         <Input 
           value={name} 
           onChange={e => setName(e.target.value)}
@@ -45,7 +44,6 @@ export function CreatePieceDialog({ open, onOpenChange, imageUrl, onConfirm }: C
           autoFocus
           onKeyDown={e => e.key === 'Enter' && handleSubmit()} 
         />
-
         <DialogFooter>
           <Button onClick={handleSubmit} disabled={!name.trim()}>
             Crear

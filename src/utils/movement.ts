@@ -100,8 +100,7 @@ export function getValidMoves(
 
     for (const dir of dirs) {
       const maxSteps =
-        rule.type === 'unit' ? 1
-        : rule.type === 'range' ? (rule.range || 1)
+        rule.type === 'range' ? (rule.range || 1)
         : Math.max(rows, cols);
 
       for (let s = 1; s <= maxSteps; s++) {

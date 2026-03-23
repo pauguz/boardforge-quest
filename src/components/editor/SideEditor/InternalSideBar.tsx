@@ -1,6 +1,4 @@
 import { useGeneralEditor } from '@/context/GeneralEditorContext';
-import React from 'react'
-import { useState } from 'react';
 import { PieceSidebar } from './PieceSidebar';
 import BoxSideBar from './BoxSideBar';
 
