@@ -19,10 +19,10 @@ export function TopBar() {
   } = useGameEditor();
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();
-  const createRoom = () => {
-      const id = generateRoomId();
-      navigate(`/room/${id}`);
-    };
+  //const createRoom = () => {
+  //    const id = generateRoomId();
+  //    navigate(`/room/${id}`);
+  //  };
 
   return (
     <>
