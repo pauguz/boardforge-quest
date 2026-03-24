@@ -18,17 +18,27 @@ export function PieceSidebar() {
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [paramsId, setParamsId] = useState<string | null>(null);
   const [testId, setTestId] = useState<string | null>(null);
+  const [pendingName, setPendingName] = useState<string|null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+  
+    // 1. Extraer el nombre y quitarle la extensión 
+    const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+    
+    // 2. Guardar el nombre en el estado
+    setPendingName(fileNameWithoutExtension);
+  
     const reader = new FileReader();
     reader.onload = () => {
       setPendingImage(reader.result as string);
       setShowNameDialog(true);
     };
     reader.readAsDataURL(file);
+  
+    // Limpiar el input para permitir subir el mismo archivo después si se desea
     e.target.value = '';
   };
 
@@ -84,6 +94,7 @@ export function PieceSidebar() {
     <CreatePieceDialog open={showNameDialog} 
             onOpenChange={setShowNameDialog}
             imageUrl={pendingImage}
+            imageName={pendingName}
             onConfirm={handleCreate}
           />
 

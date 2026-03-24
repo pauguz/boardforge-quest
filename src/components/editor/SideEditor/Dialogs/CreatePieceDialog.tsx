@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -7,15 +7,17 @@ interface CreatePieceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   imageUrl: string | null;
+  imageName: string;
   onConfirm: (name: string) => void;
 }
 
-export function CreatePieceDialog({ open, onOpenChange, imageUrl, onConfirm }: CreatePieceDialogProps) {
-  const [name, setName] = useState("");
+export function CreatePieceDialog({ open, onOpenChange, imageUrl, imageName, onConfirm }: CreatePieceDialogProps) {
+  const [name, setName] = useState(imageName);
 
   // Limpiar el input cada vez que el diálogo se cierra o se abre con nueva imagen
   useEffect(() => {
     if (!open) setName("");
+    else setName(imageName);
   }, [open]);
 
   const handleSubmit = () => {
@@ -30,6 +32,9 @@ export function CreatePieceDialog({ open, onOpenChange, imageUrl, onConfirm }: C
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Nombre de la ficha</DialogTitle>
+          <DialogDescription>
+            Define en que direccion y rango se moverá tu ficha
+          </DialogDescription>
         </DialogHeader>
         
         {imageUrl && (
@@ -40,7 +45,6 @@ export function CreatePieceDialog({ open, onOpenChange, imageUrl, onConfirm }: C
         <Input 
           value={name} 
           onChange={e => setName(e.target.value)}
-          placeholder="Ej: Rey, Peón, Torre..." 
           autoFocus
           onKeyDown={e => e.key === 'Enter' && handleSubmit()} 
         />
