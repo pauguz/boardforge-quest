@@ -48,7 +48,6 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
   const [boardCols, setBoardCols] = useState(8);
   const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);
-  const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
   const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
   const [victoryConditions, setVictoryConditions] = useState<VictoryCondition[][]>([[],[]]);
   const [isPlaying, setIsPlaying] = useState(false);
