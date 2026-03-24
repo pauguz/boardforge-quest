@@ -12,12 +12,12 @@ interface CreatePieceDialogProps {
 }
 
 export function CreatePieceDialog({ open, onOpenChange, imageUrl, imageName, onConfirm }: CreatePieceDialogProps) {
-  const [name, setName] = useState(imageName);
+  const [name, setName] = useState("");
 
   // Limpiar el input cada vez que el diálogo se cierra o se abre con nueva imagen
   useEffect(() => {
     if (!open) setName("");
-    else setName(imageName);
+    else {setName(imageName);}
   }, [open]);
 
   const handleSubmit = () => {
