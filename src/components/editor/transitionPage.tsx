@@ -6,7 +6,7 @@ const TransitionPage = () => {
     const [seconds, setSeconds] = useState(10);
     const {
             boardRows, boardCols, 
-            pieceTypes, boardPieces, victoryConditions,
+            gamePieceTypes: pieceTypes, boardPieces, victoryConditions,
         } = useGameEditor();
     const handleDownload = () => {
         const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);

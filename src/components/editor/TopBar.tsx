@@ -15,7 +15,7 @@ export function TopBar() {
     boardRows, boardCols, setBoardRows, setBoardCols,
     currentPlayer, setCurrentPlayer,
     isPlaying, startGame, stopGame, playState,
-    pieceTypes, boardPieces, victoryConditions,
+    gamePieceTypes: pieceTypes, boardPieces, victoryConditions,
   } = useGameEditor();
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();

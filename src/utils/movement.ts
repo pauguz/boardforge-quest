@@ -179,3 +179,12 @@ export function checkVictory(
   }
   return null;
 }
+
+export function checkDefeat(
+  currentPieces: BoardPiece[],
+  initialPieces: BoardPiece[],
+  conditions: VictoryCondition[],
+  plyr: number,
+): number| null {
+
+}

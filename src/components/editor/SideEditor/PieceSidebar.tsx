@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
+import { useGeneralEditor } from "@/context/GeneralEditorContext";
+
 import { Button } from "@/components/ui/button";
 import { CreatePieceDialog } from "./Dialogs/CreatePieceDialog";
 import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} from "@/components/ui/context-menu";
@@ -10,9 +12,11 @@ import SideItem from "./SideItem";
 
 export function PieceSidebar() {
   const {
-    pieceTypes, addPieceType, removePieceType,
-    selectedPieceTypeId, setSelectedPieceTypeId, isPlaying,
+    gamePieceTypes: pieceTypes, addGamePieceType: addPieceType, removeGamePieceType: removePieceType,
+     isPlaying,
   } = useGameEditor();
+
+  const {selectedPieceTypeId, setSelectedPieceTypeId}= useGeneralEditor();
 
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [pendingImage, setPendingImage] = useState<string | null>(null);

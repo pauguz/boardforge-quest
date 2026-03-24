@@ -14,7 +14,6 @@ interface GeneralEditorContextType{
   setSelectedPieceTypeId: (id: string | null) => void;
   selectedMenuId: string | null;
   setSelectedMenuId: (id: string | null) => void;
-
 }
 
 const Ctx = createContext<GeneralEditorContextType | null>(null);

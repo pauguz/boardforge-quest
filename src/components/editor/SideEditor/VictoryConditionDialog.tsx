@@ -17,7 +17,7 @@ interface Props {
 
 export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   const {
-    boardRows, boardCols, pieceTypes,
+    boardRows, boardCols, gamePieceTypes: pieceTypes,
     victoryConditions, addVictoryCondition, removeVictoryCondition,
   } = useGameEditor();
 

@@ -17,7 +17,7 @@ interface Props {
 }
 
 export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props) {
-  const { pieceTypes, updatePieceType } = useGameEditor();
+  const { gamePieceTypes: pieceTypes, updateGamePieceType: updatePieceType } = useGameEditor();
   const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
 
   const [dx, setDx] = useState(0);

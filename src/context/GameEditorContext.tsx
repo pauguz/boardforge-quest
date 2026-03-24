@@ -16,14 +16,13 @@ interface GameEditorContextType {
   boardCols: number;
   setBoardRows: (n: number) => void;
   setBoardCols: (n: number) => void;
-  pieceTypes: PieceType[];
-  addPieceType: (name: string, imageUrl: string) => void;
-  updatePieceType: (id: string, updates: Partial<PieceType>) => void;
-  removePieceType: (id: string) => void;
+  gamePieceTypes: PieceType[];
+  addGamePieceType: (name: string, imageUrl: string) => void;
+  updateGamePieceType: (id: string, updates: Partial<PieceType>) => void;
+  removeGamePieceType: (id: string) => void;
+
   boardPieces: BoardPiece[];
   setBoardPieces: React.Dispatch<React.SetStateAction<BoardPiece[]>>;
-  selectedPieceTypeId: string | null;
-  setSelectedPieceTypeId: (id: string | null) => void;
   currentPlayer: 1 | 2;
   setCurrentPlayer: (p: 1 | 2) => void;
   victoryConditions: VictoryCondition[][];
@@ -153,9 +152,8 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
   return (
     <Ctx.Provider value={{
       boardRows, boardCols, setBoardRows, setBoardCols,
-      pieceTypes, addPieceType, updatePieceType, removePieceType,
+      gamePieceTypes: pieceTypes, addGamePieceType: addPieceType, updateGamePieceType: updatePieceType, removeGamePieceType: removePieceType,
       boardPieces, setBoardPieces,
-      selectedPieceTypeId, setSelectedPieceTypeId,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
       isPlaying, playState, startGame, stopGame, handlePlayClick,

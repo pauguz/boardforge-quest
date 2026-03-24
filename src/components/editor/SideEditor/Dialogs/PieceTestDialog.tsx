@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function PieceTestDialog({ pieceTypeId, open, onOpenChange }: Props) {
-  const { pieceTypes, boardRows, boardCols } = useGameEditor();
+  const { gamePieceTypes: pieceTypes, boardRows, boardCols } = useGameEditor();
   const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
   const [testPos, setTestPos] = useState<Position>({ row: Math.floor(boardRows / 2), col: Math.floor(boardCols / 2) });
   const [showMoves, setShowMoves] = useState(false);
