@@ -7,7 +7,7 @@ interface CreatePieceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   imageUrl: string | null;
-  imageName: string;
+  imageName: string | null;
   onConfirm: (name: string) => void;
 }
 
@@ -21,7 +21,7 @@ export function CreatePieceDialog({ open, onOpenChange, imageUrl, imageName, onC
   }, [open]);
 
   const handleSubmit = () => {
-    if (name.trim()) {
+    if ( name && name.trim()) {
       onConfirm(name.trim());
       // No cerramos aquí, dejamos que el padre decida (aunque lo normal es que el padre cierre)
     }
