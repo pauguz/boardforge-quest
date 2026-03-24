@@ -3,10 +3,11 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 
 interface GeneralEditorContextType {
-  status: 1|2|3;  //Editando/Cargando/Mostrando
-  setStatus: (st:1|2|3)=>void;
+  status: 1|2|3|4;  //Editando/Cargando/Mostrando
+  setStatus: (st:1|2|3|4)=>void;
   //tabs: any[];
-  //selectedTab: number;
+  selectedTab: number;
+  setSelectedTab: (t:number) => void;
   pieceTypes: PieceType[];
   addPieceType: (name: string, imageUrl: string) => void;
   updatePieceType: (id: string, updates: Partial<PieceType>) => void;
@@ -26,10 +27,11 @@ export function useGeneralEditor() {
 }
 
 const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
-    const [status, setStatus] = useState<1|2|3>(1);
+    const [status, setStatus] = useState<1|2|3|4>(1);
     const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
     const [selectedMenuId, setSelectedMenuId] = useState<string | null>('1');
     const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
+    const [selectedTab, setSelectedTab] = useState<number>(0);
 
     const addPieceType = useCallback((name: string, imageUrl: string) => {
       setPieceTypes(prev => [...prev, {
@@ -49,7 +51,8 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
   
   return (
     <Ctx.Provider value={{selectedMenuId, setSelectedMenuId, selectedPieceTypeId, setSelectedPieceTypeId,
-      updatePieceType, addPieceType, removePieceType, pieceTypes, status, setStatus
+      updatePieceType, addPieceType, removePieceType, pieceTypes, status, setStatus,
+      selectedTab, setSelectedTab,
      }}>
       {children}
     </Ctx.Provider>

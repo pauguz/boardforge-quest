@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { PieceType, BoardPiece, VictoryCondition, Position } from '@/types/game';
 import { getValidMoves, getEuropeanCaptures, checkVictory } from '@/utils/movement';
-
+import { useGeneralEditor } from './GeneralEditorContext';
 interface PlayState {
   pieces: BoardPiece[];
   turn: 1 | 2;
@@ -39,8 +39,13 @@ const Ctx = createContext<GameEditorContextType | null>(null);
 
 export function useGameEditor() {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error('useGameEditor must be inside GameEditorProvider');
-  return ctx;
+  const general= useGeneralEditor()
+  if (!ctx) {
+    throw new Error('useGameEditor must be inside GameEditorProvider');
+  }
+  if (!general) {
+    throw new Error('GameEditorProvider must be a child of GeneralEditorProvider');
+  }  return ctx;
 }
 
 export function GameEditorProvider({ children }: { children: React.ReactNode }) {
@@ -67,6 +72,8 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
     setPieceTypes(prev => prev.filter(pt => pt.id !== id));
     setBoardPieces(prev => prev.filter(bp => bp.pieceTypeId !== id));
   }, []);
+
+  
 
   const addVictoryCondition = useCallback(
     (vc: VictoryCondition, j: number) => {
