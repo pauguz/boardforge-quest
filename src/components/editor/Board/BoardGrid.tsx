@@ -5,10 +5,9 @@ import { cn } from "@/lib/utils";
 export function BoardGrid() {
   const {
     boardRows, boardCols, boardPieces, setBoardPieces,
-    currentPlayer, gamePieceTypes: pieceTypes,
-    isPlaying, playState, handlePlayClick, victoryConditions,
+    currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
   } = useGameEditor();
-  const {selectedPieceTypeId,}=useGeneralEditor();
+  const {selectedPieceTypeId, pieceTypes,}=useGeneralEditor();
     
   const handleCellClick = (row: number, col: number) => {
     if (isPlaying) {

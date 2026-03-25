@@ -4,6 +4,7 @@ import { BoardPiece, Position } from "@/types/game";
 import { getValidMoves } from "@/utils/movement";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
   pieceTypeId: string | null;
@@ -12,7 +13,8 @@ interface Props {
 }
 
 export function PieceTestDialog({ pieceTypeId, open, onOpenChange }: Props) {
-  const { gamePieceTypes: pieceTypes, boardRows, boardCols } = useGameEditor();
+  const { boardRows, boardCols } = useGameEditor();
+  const { pieceTypes,} = useGeneralEditor();
   const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
   const [testPos, setTestPos] = useState<Position>({ row: Math.floor(boardRows / 2), col: Math.floor(boardCols / 2) });
   const [showMoves, setShowMoves] = useState(false);

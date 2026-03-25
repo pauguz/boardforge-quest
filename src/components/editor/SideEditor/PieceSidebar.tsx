@@ -12,9 +12,12 @@ import SideItem from "./SideItem";
 
 export function PieceSidebar() {
   const {
-    gamePieceTypes: pieceTypes, addGamePieceType: addPieceType, removeGamePieceType: removePieceType,
-     isPlaying,
-  } = useGameEditor();
+    pieceTypes, addPieceType, removePieceType,
+  } = useGeneralEditor();
+
+  const {     isPlaying,  }= useGameEditor();
+
+
 
   const {selectedPieceTypeId, setSelectedPieceTypeId}= useGeneralEditor();
 

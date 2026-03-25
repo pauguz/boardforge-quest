@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { X } from "lucide-react";
 import { findDirections } from "@/utils/movement";
+import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
   pieceTypeId: string | null;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props) {
-  const { gamePieceTypes: pieceTypes, updateGamePieceType: updatePieceType } = useGameEditor();
+  const { pieceTypes, updatePieceType } = useGeneralEditor();
   const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
 
   const [dx, setDx] = useState(0);

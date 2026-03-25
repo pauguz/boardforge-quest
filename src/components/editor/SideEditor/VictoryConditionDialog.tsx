@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
+import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { VictoryCondition, Position } from "@/types/game";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,9 +18,11 @@ interface Props {
 
 export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   const {
-    boardRows, boardCols, gamePieceTypes: pieceTypes,
+    boardRows, boardCols,
     victoryConditions, addVictoryCondition, removeVictoryCondition,
   } = useGameEditor();
+
+  const {pieceTypes,} = useGeneralEditor();
 
   const [mode, setMode] = useState<'arrival' | 'capture'>('capture');
   const [pieceTypeId, setPieceTypeId] = useState('');
