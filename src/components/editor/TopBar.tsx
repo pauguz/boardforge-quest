@@ -9,15 +9,17 @@ import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
 import { generateRoomId } from "@/utils/roomId";
+import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 export function TopBar() {
   const {
     boardRows, boardCols, setBoardRows, setBoardCols,
     currentPlayer, setCurrentPlayer,
     isPlaying, startGame, stopGame, playState,
-    gamePieceTypes: pieceTypes, boardPieces, victoryConditions,
+    boardPieces, victoryConditions,
   } = useGameEditor();
 
+  const {pieceTypes,} = useGeneralEditor();
   
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();

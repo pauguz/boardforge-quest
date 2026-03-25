@@ -18,8 +18,10 @@ export function BoardGrid() {
     const existing = boardPieces.find(p => p.row === row && p.col === col);
     if (existing) {
       setBoardPieces(prev => prev.filter(p => !(p.row === row && p.col === col)));
-      if (! gamePieceTypes.find(t => t.id === selectedPieceTypeId)) addGamePieceType(selectedPieceTypeId);
-    } else if (selectedPieceTypeId) {
+      if (selectedPieceTypeId && !gamePieceTypes.find(t => t.id === selectedPieceTypeId)) addGamePieceType(selectedPieceTypeId);
+      console.log(selectedPieceTypeId);
+    } 
+    else if (selectedPieceTypeId) {
       setBoardPieces(prev => [...prev, {
         pieceTypeId: selectedPieceTypeId, player: currentPlayer, row, col,
       }]);

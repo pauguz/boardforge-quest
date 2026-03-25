@@ -1,4 +1,5 @@
 import { GameEditorProvider, useGameEditor } from '@/context/GameEditorContext';
+import { useGeneralEditor } from '@/context/GeneralEditorContext';
 import { exportGameAsHTML } from '@/utils/gameExport';
 import React, { useEffect, useState } from 'react'
 
@@ -6,8 +7,9 @@ const TransitionPage = () => {
     const [seconds, setSeconds] = useState(10);
     const {
             boardRows, boardCols, 
-            gamePieceTypes: pieceTypes, boardPieces, victoryConditions,
+            boardPieces, victoryConditions,
         } = useGameEditor();
+    const {pieceTypes, } = useGeneralEditor();
     const handleDownload = () => {
         const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
         const blob = new Blob([html], { type: 'text/html' });
