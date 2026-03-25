@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { PieceType, BoardPiece, VictoryCondition, Position } from '@/types/game';
 import { getValidMoves, getEuropeanCaptures, checkVictory } from '@/utils/movement';
 import { useGeneralEditor } from './GeneralEditorContext';
@@ -17,8 +17,7 @@ interface GameEditorContextType {
   setBoardRows: (n: number) => void;
   setBoardCols: (n: number) => void;
   gamePieceTypes: PieceType[];
-  addGamePieceType: (name: string, imageUrl: string) => void;
-  updateGamePieceType: (id: string, updates: Partial<PieceType>) => void;
+  addGamePieceType: (id: string) => void;
   removeGamePieceType: (id: string) => void;
 
   boardPieces: BoardPiece[];
@@ -51,29 +50,32 @@ export function useGameEditor() {
 export function GameEditorProvider({ children }: { children: React.ReactNode }) {
   const [boardRows, setBoardRows] = useState(8);
   const [boardCols, setBoardCols] = useState(8);
-  const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
+  const [gamePieceTypes, setGamePieceTypes] = useState<PieceType[]>([]);
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
   const [victoryConditions, setVictoryConditions] = useState<VictoryCondition[][]>([[],[]]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playState, setPlayState] = useState<PlayState | null>(null);
 
-  const addPieceType = useCallback((name: string, imageUrl: string) => {
-    setPieceTypes(prev => [...prev, {
-      id: crypto.randomUUID(), name, imageUrl, movements: [], captureMode: 'indian',
-    }]);
+
+  const {pieceTypes}=useGeneralEditor();
+  const addGamePieceType = useCallback((id: string) => {
+    setGamePieceTypes(prev => [...prev, pieceTypes.find(pt => pt.id === id)]);
   }, []);
 
-  const updatePieceType = useCallback((id: string, updates: Partial<PieceType>) => {
-    setPieceTypes(prev => prev.map(pt => pt.id === id ? { ...pt, ...updates } : pt));
-  }, []);
 
-  const removePieceType = useCallback((id: string) => {
-    setPieceTypes(prev => prev.filter(pt => pt.id !== id));
+  const removeGamePieceType = useCallback((id: string) => {
+    setGamePieceTypes(prev => prev.filter(pt => pt.id !== id));
     setBoardPieces(prev => prev.filter(bp => bp.pieceTypeId !== id));
   }, []);
 
-  
+    // El "Trigger"
+    const {lastRemoval}=useGeneralEditor();
+    useEffect(() => {
+      if (lastRemoval) {
+        removeGamePieceType(lastRemoval.payload);
+      }
+    }, [lastRemoval]);
 
   const addVictoryCondition = useCallback(
     (vc: VictoryCondition, j: number) => {
@@ -121,7 +123,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
     if (selected && validMoves.some(m => m.row === row && m.col === col)) {
       const movingPiece = pieces.find(p => p.row === selected.row && p.col === selected.col);
       if (!movingPiece) return;
-      const pt = pieceTypes.find(t => t.id === movingPiece.pieceTypeId);
+      const pt = gamePieceTypes.find(t => t.id === movingPiece.pieceTypeId);
       if (!pt) return;
 
       let newPieces = pieces.filter(p => !(p.row === selected.row && p.col === selected.col));
@@ -146,19 +148,19 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
 
     const clickedPiece = pieces.find(p => p.row === row && p.col === col && p.player === turn);
     if (clickedPiece) {
-      const pt = pieceTypes.find(t => t.id === clickedPiece.pieceTypeId);
+      const pt = gamePieceTypes.find(t => t.id === clickedPiece.pieceTypeId);
       if (!pt) return;
       const { moves } = getValidMoves(clickedPiece, pt, pieces, boardRows, boardCols);
       setPlayState({ ...playState, selected: { row, col }, validMoves: moves });
     } else {
       setPlayState({ ...playState, selected: null, validMoves: [] });
     }
-  }, [playState, pieceTypes, boardRows, boardCols, victoryConditions]);
+  }, [playState, gamePieceTypes, boardRows, boardCols, victoryConditions]);
 
   return (
     <Ctx.Provider value={{
       boardRows, boardCols, setBoardRows, setBoardCols,
-      gamePieceTypes: pieceTypes, addGamePieceType: addPieceType, updateGamePieceType: updatePieceType, removeGamePieceType: removePieceType,
+      gamePieceTypes, addGamePieceType, removeGamePieceType,
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,

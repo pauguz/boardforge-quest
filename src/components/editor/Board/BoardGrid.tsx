@@ -6,6 +6,7 @@ export function BoardGrid() {
   const {
     boardRows, boardCols, boardPieces, setBoardPieces,
     currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
+    addGamePieceType,
   } = useGameEditor();
   const {selectedPieceTypeId, pieceTypes,}=useGeneralEditor();
     
@@ -21,6 +22,7 @@ export function BoardGrid() {
       setBoardPieces(prev => [...prev, {
         pieceTypeId: selectedPieceTypeId, player: currentPlayer, row, col,
       }]);
+      addGamePieceType(selectedPieceTypeId);
     }
   };
 

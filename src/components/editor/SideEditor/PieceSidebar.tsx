@@ -15,7 +15,7 @@ export function PieceSidebar() {
     pieceTypes, addPieceType, removePieceType,
   } = useGeneralEditor();
 
-  const {     isPlaying,  }= useGameEditor();
+  const {isPlaying,}= useGameEditor();
 
 
 
