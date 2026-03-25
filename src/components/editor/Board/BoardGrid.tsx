@@ -6,7 +6,7 @@ export function BoardGrid() {
   const {
     boardRows, boardCols, boardPieces, setBoardPieces,
     currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
-    addGamePieceType,
+    addGamePieceType, gamePieceTypes
   } = useGameEditor();
   const {selectedPieceTypeId, pieceTypes,}=useGeneralEditor();
     
@@ -18,11 +18,12 @@ export function BoardGrid() {
     const existing = boardPieces.find(p => p.row === row && p.col === col);
     if (existing) {
       setBoardPieces(prev => prev.filter(p => !(p.row === row && p.col === col)));
+      if (! gamePieceTypes.find(t => t.id === selectedPieceTypeId)) addGamePieceType(selectedPieceTypeId);
     } else if (selectedPieceTypeId) {
       setBoardPieces(prev => [...prev, {
         pieceTypeId: selectedPieceTypeId, player: currentPlayer, row, col,
       }]);
-      addGamePieceType(selectedPieceTypeId);
+      
     }
   };
 

@@ -182,9 +182,9 @@ export function checkVictory(
 
 export function checkDefeat(
   currentPieces: BoardPiece[],
-  initialPieces: BoardPiece[],
   conditions: VictoryCondition[],
-  plyr: number,
-): number| null {
-
+  plyr: number
+):  number| null {
+  
+  return null;
 }

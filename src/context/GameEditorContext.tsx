@@ -61,7 +61,9 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
   const {pieceTypes}=useGeneralEditor();
   const addGamePieceType = useCallback((id: string) => {
     setGamePieceTypes(prev => [...prev, pieceTypes.find(pt => pt.id === id)]);
-  }, []);
+    console.log('tipos de ficha: ')
+    console.log(gamePieceTypes);
+  }, [pieceTypes]);
 
 
   const removeGamePieceType = useCallback((id: string) => {
@@ -119,7 +121,8 @@ export function GameEditorProvider({ children }: { children: React.ReactNode }) 
   const handlePlayClick = useCallback((row: number, col: number) => {
     if (!playState || playState.winner) return;
     const { pieces, turn, selected, validMoves } = playState;
-
+    console.log('tipos de ficha: ')
+    console.log(gamePieceTypes);
     if (selected && validMoves.some(m => m.row === row && m.col === col)) {
       const movingPiece = pieces.find(p => p.row === selected.row && p.col === selected.col);
       if (!movingPiece) return;
