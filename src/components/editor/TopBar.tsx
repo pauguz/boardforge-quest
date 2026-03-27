@@ -19,7 +19,7 @@ export function TopBar() {
     boardPieces, victoryConditions,
   } = useGameEditor();
 
-  const {pieceTypes,} = useGeneralEditor();
+  const {pieceTypes, status, setStatus} = useGeneralEditor();
   
   const [showVictory, setShowVictory] = useState(false);
   const navigate = useNavigate();
@@ -27,6 +27,20 @@ export function TopBar() {
   //    const id = generateRoomId();
   //    navigate(`/room/${id}`);
   //  };
+
+  const handleDownload=()=>{
+    if(status==3){
+      const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'juego-de-mesa.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    } else if (status==1) setStatus(2);
+
+  }
 
   return (
     <>
@@ -64,14 +78,7 @@ export function TopBar() {
         )}
 
         <Button variant="outline" size="sm" onClick={() => {
-          const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
-          const blob = new Blob([html], { type: 'text/html' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'juego-de-mesa.html';
-          a.click();
-          URL.revokeObjectURL(url);
+          handleDownload()
         }} disabled={boardPieces.length === 0 || isPlaying}>
           <Download className="w-4 h-4 mr-1" /> Descargar
         </Button>

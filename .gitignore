@@ -25,3 +25,7 @@ dist-ssr
 src/pages/testing.tsx
 .env.development
 src/pages/LudiSala.tsx
+src/routing/TestRouter.tsx
+/src/components/testeo
+src/pages/testingTutorial.tsx
+src/pages/testingMotion.tsx

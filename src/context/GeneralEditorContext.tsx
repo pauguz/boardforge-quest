@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 
 
 interface GeneralEditorContextType {
-  status: 1|2|3|4;  //Editando/Cargando/Mostrando
-  setStatus: (st:1|2|3|4)=>void;
+  status: 1|2|3;  //Editando/Cargando/Donante
+  setStatus: (st:1|2|3)=>void;
   //tabs: any[];
   selectedTab: number;
   setSelectedTab: (t:number) => void;
@@ -29,7 +29,7 @@ export function useGeneralEditor() {
 }
 
 const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
-    const [status, setStatus] = useState<1|2|3|4>(1);
+    const [status, setStatus] = useState<1|2|3>(1);
     const [lastRemoval, setLastRemoval] = useState<{ payload: any; id: number } | null>(null);
     const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
     const [selectedMenuId, setSelectedMenuId] = useState<string | null>('1');

@@ -17,7 +17,6 @@ export function BoardGrid() {
     }
     const existing = boardPieces.find(p => p.row === row && p.col === col);
     if (existing) {
-      //console.log("HOLA")
       setBoardPieces(prev => prev.filter(p => !(p.row === row && p.col === col)));
     } 
     else if (selectedPieceTypeId) {
