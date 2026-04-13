@@ -2,14 +2,17 @@ import { useState } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { VictoryConditionDialog } from "./SideEditor/VictoryConditionDialog";
 import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
-import { generateRoomId } from "@/utils/roomId";
+import { generateRoomId, toBinaryString, incremento, localInt } from "@/utils/roomId";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
+import { supabase } from '../../utils/supabaseClient';
+import { countRoomsperUser, createRoomwithGame } from "../../../services/salaServic";
+import { dummy } from "@/utils/dummy";
+
 
 export function TopBar() {
   const {
@@ -22,11 +25,28 @@ export function TopBar() {
   const {pieceTypes, status, setStatus} = useGeneralEditor();
   
   const [showVictory, setShowVictory] = useState(false);
-  const navigate = useNavigate();
-  //const createRoom = () => {
-  //    const id = generateRoomId();
-  //    navigate(`/room/${id}`);
-  //  };
+  
+  const createRoom = async (alt:number, anc:number ) => {
+    if( ! localStorage.getItem("creador")){
+      localStorage.setItem('creador', crypto.randomUUID());
+    }
+
+    const creatorId =localStorage.getItem("creador");
+    
+    const sc:number= localInt("salasCreadas") || 0;
+    console.log("Tienes ", sc, " salas creadas y el id con numero: ", creatorId );
+
+    if(sc<3){
+      const codSala = generateRoomId();
+      console.log('Iniciando Creacion de Sala y Juego, sc: ', sc)
+      const ventana = (data)=>{      
+        window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
+      }
+      createRoomwithGame(creatorId, 'juego',alt, anc, codSala, ventana );
+      localStorage.setItem('salasCreadas', incremento(sc));
+      }
+
+    };
 
   const handleDownload=()=>{
     if(status==3){
@@ -83,7 +103,9 @@ export function TopBar() {
           <Download className="w-4 h-4 mr-1" /> Descargar
         </Button>
 
-        <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}>
+        <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
+        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an);}}
+        >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>
 

@@ -2,14 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { PieceType, BoardPiece, VictoryCondition, Position } from '@/types/game';
 import { getValidMoves, getEuropeanCaptures, checkVictory } from '@/utils/movement';
 import { useGeneralEditor } from './GeneralEditorContext';
-interface PlayState {
-  pieces: BoardPiece[];
-  turn: 1 | 2;
-  selected: Position | null;
-  validMoves: Position[];
-  winner: number | null;
-  initialPieces: BoardPiece[];
-}
+import { PlayState } from '@/types/game';
 
 interface GameEditorContextType {
   boardRows: number;
@@ -46,7 +39,7 @@ export function useGameEditor() {
   }  return ctx;
 }
 
-export function GameEditorProvider({ children }: { children: React.ReactNode }) {
+export function GameEditorProvider({ children }: { children: React.ReactNode, filtro:any }) {
   const [boardRows, setBoardRows] = useState(8);
   const [boardCols, setBoardCols] = useState(8);
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);

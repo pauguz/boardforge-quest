@@ -22,10 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-src/pages/testing.tsx
 .env.development
-src/pages/LudiSala.tsx
+
+
+# Componentes no utiles al despliege
+src/pages/testing.tsx
 src/routing/TestRouter.tsx
 /src/components/testeo
 src/pages/testingTutorial.tsx
 src/pages/testingMotion.tsx
+src/components/editor/createRoom.txt

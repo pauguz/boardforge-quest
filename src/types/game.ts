@@ -5,7 +5,7 @@ export interface Direction {
 
 export interface MovementRule {
   direction: Direction;
-  type: 'unit' | 'range' | 'indefinite';
+  type: 'range' | 'indefinite';
   range?: number;
   rotate: boolean;
 }
@@ -38,4 +38,13 @@ export interface VictoryCondition {
   mode: VictoryMode;
   pieceTypeId: string;
   targetCells?: Position[];
+}
+
+export interface PlayState {
+  pieces: BoardPiece[];
+  turn: 1 | 2;
+  selected: Position | null;
+  validMoves: Position[];
+  winner: number | null;
+  initialPieces: BoardPiece[];
 }
