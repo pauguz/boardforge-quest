@@ -67,63 +67,55 @@ const getRoomNumber = async(localId:string)=>{
 }
 
 //En esta version supones que el boardRows y boardCols llegan ya en binario
-const createRoom = async (boardRows: number, boardCols:number,) => { 
-  const sc:number= 0
-  if(sc<3){
-    console.log('Iniciando Creacion de Sala y Juego, sc: ', sc)
-    if (sc>=1){
-        const juego_id =localStorage.getItem('juego_id');
-        // Insertar en la base de datos
-        const { data, error } = await supabase
+// NOTE: legacy/unused helper. Cast to any to bypass strict typing of the
+// generated Supabase Database types (columns are typed as `unknown`).
+const createRoom = async (boardRows: number, boardCols: number) => {
+  const sc: number = 0;
+  const sb: any = supabase;
+  if (sc < 3) {
+    console.log('Iniciando Creacion de Sala y Juego, sc: ', sc);
+    if (sc >= 1) {
+      const juego_id = localStorage.getItem('juego_id');
+      const { data, error } = await sb
         .from('juego')
-        .update([
-          { nombre: 'Juego', alto: boardRows, ancho:boardCols, magnitud:2, public:0 }
-        ]).eq('id', juego_id)
-        .select( ); // .select() devuelve el registro creado, útil para actualizar la UI
-        console.log(data);
-        if (error) {
-          console.error('Error al insertar:', error.message);
-        } else {
-          console.log('Registro creado:', data);
-        }
+        .update([{ nombre: 'Juego', alto: boardRows, ancho: boardCols, magnitud: 2, public: 0 }])
+        .eq('id', juego_id)
+        .select();
+      console.log(data);
+      if (error) {
+        console.error('Error al insertar:', error.message);
       } else {
-        localStorage.setItem('creador', crypto.randomUUID())
-        // Insertar en la base de datos
-        const { data, error } = await supabase
-        .from('juego')
-        .insert([
-          { nombre: 'Juego', alto: (boardRows) , ancho:(boardCols), magnitud:2, public:0 }
-        ])
-        .select( ); // .select() devuelve el registro creado, útil para actualizar la UI
-        console.log('datos: ', data);
-        localStorage.setItem('juego_id', data[0].id) ;
-
-        if (error) {
-          console.error('Error al insertar:', error.message);
-        } else {
-          console.log('Registro creado:', data);
-        } 
+        console.log('Registro creado:', data);
       }
-      const codSala = generateRoomId();
-    
-      // Insertar en la base de datos
-      const { data, error } = await supabase
-      .from('sala')
-      .insert([
-        { codigo: codSala, ip: '1' , juego_id: localStorage.getItem('juego_id'), creador_id: localStorage.getItem('creador')}
-          ])
-        .select( ); // .select() devuelve el registro creado, útil para actualizar la UI
-        console.log('datos: ', data);
-        if (error) {
-          console.error('Error al insertar la sala:', error.message);
-          } else {
-            console.log('Registro creado la tabla:', data);
-          } 
-    
-    navigate(`/sala/${codSala}`);
+    } else {
+      localStorage.setItem('creador', crypto.randomUUID());
+      const { data, error } = await sb
+        .from('juego')
+        .insert([{ nombre: 'Juego', alto: boardRows, ancho: boardCols, magnitud: 2, public: 0 }])
+        .select();
+      console.log('datos: ', data);
+      if (data && data[0]) localStorage.setItem('juego_id', String(data[0].id));
+      if (error) {
+        console.error('Error al insertar:', error.message);
+      } else {
+        console.log('Registro creado:', data);
+      }
+    }
+    const codSala: string = (globalThis as any).generateRoomId?.() ?? '';
 
-    localStorage.setItem('salas_creadas', incremento(sc));
+    const { data, error } = await sb
+      .from('sala')
+      .insert([{ codigo: codSala, ip: '1', juego_id: localStorage.getItem('juego_id'), creador_id: localStorage.getItem('creador') }])
+      .select();
+    console.log('datos: ', data);
+    if (error) {
+      console.error('Error al insertar la sala:', error.message);
+    } else {
+      console.log('Registro creado la tabla:', data);
     }
 
-  };
+    (globalThis as any).navigate?.(`/sala/${codSala}`);
+    localStorage.setItem('salas_creadas', String((globalThis as any).incremento?.(sc) ?? sc + 1));
+  }
+};
 

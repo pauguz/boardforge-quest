@@ -1,13 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY;
-if (!supabaseUrl) {
-    console.error("La URL de Supabase no está llegando al cliente.");
-    console.log("Variables detectadas por Vite:", import.meta.env);
-  }
-
-  
-  export const supabase = (supabaseUrl && supabaseAnonKey) 
-  ? createClient(supabaseUrl, supabaseAnonKey) 
-  : null as any; 
+// Re-export the official Lovable Cloud Supabase client.
+// Do NOT create a parallel client here — the official one in
+// `@/integrations/supabase/client` is auto-wired with the correct
+// VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY env vars
+// injected by Lovable Cloud at build time.
+export { supabase } from "@/integrations/supabase/client";
