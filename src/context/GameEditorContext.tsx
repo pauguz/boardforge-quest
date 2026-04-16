@@ -39,7 +39,7 @@ export function useGameEditor() {
   }  return ctx;
 }
 
-export function GameEditorProvider({ children }: { children: React.ReactNode, filtro:any }) {
+export function GameEditorProvider({ children }: { children: React.ReactNode}) {
   const [boardRows, setBoardRows] = useState(8);
   const [boardCols, setBoardCols] = useState(8);
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);
