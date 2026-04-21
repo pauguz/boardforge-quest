@@ -15,7 +15,8 @@ const TransitionPage = ( {st, request=0}: TransitionProps) => {
             boardPieces, victoryConditions,
         } = useGameEditor();
     const {pieceTypes, setStatus} = useGeneralEditor();
-    const handleDownload = () => {
+
+    const doDownload = () => {
         const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
         const blob = new Blob([html], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
@@ -32,7 +33,8 @@ const TransitionPage = ( {st, request=0}: TransitionProps) => {
         return () => clearTimeout(timer);
       } else {
         // Cuando el contador llega a 0, se inicia la descarga real
-        handleDownload();
+        doDownload();
+        console.log('ANTES DE setStatus:', { st, seconds });
         setStatus(st)
       }
     }, [seconds]);

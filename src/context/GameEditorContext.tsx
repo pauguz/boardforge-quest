@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { PieceType, BoardPiece, VictoryCondition, Position } from '@/types/game';
+import { PieceType, BoardPiece, VictoryCondition, Position, getUtilPieceTypes } from '@/types/game';
 import { getValidMoves, getEuropeanCaptures, checkVictory } from '@/utils/movement';
 import { useGeneralEditor } from './GeneralEditorContext';
 import { PlayState } from '@/types/game';
@@ -9,9 +9,7 @@ interface GameEditorContextType {
   boardCols: number;
   setBoardRows: (n: number) => void;
   setBoardCols: (n: number) => void;
-  boardPieceIds: string[];
-  addBoardPieceId: (id: string)=> void;
-  removeBoardPieceId: (id: string)=> void;
+  getBoardPieceTypeCodes ,
   boardPieces: BoardPiece[];
   setBoardPieces: React.Dispatch<React.SetStateAction<BoardPiece[]>>;
   currentPlayer: 1 | 2;
@@ -43,17 +41,18 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
   const [boardRows, setBoardRows] = useState(8);
   const [boardCols, setBoardCols] = useState(8);
   const [boardPieces, setBoardPieces] = useState<BoardPiece[]>([]);
-  const [boardPieceIds, setBoardPieceIds] = useState<string []>([]);
   const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
   const [victoryConditions, setVictoryConditions] = useState<VictoryCondition[][]>([[],[]]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playState, setPlayState] = useState<PlayState | null>(null);
 
 
-  const {pieceTypes, selectedPieceTypeId}=useGeneralEditor();
+  const {pieceTypes, selectedPieceTypeCode}=useGeneralEditor();
 
-  const addBoardPieceId = useCallback( (newId:string)=>{setBoardPieceIds(prev=> [...prev, newId] )} , [])
-  const removeBoardPieceId = useCallback( (oldId:string)=>{} , [])
+  const getBoardPieceTypeCodes = useCallback(
+    ()=>{return  getUtilPieceTypes(boardPieces, pieceTypes);}, 
+    [boardPieces, pieceTypes]
+  )
 
   const addVictoryCondition = useCallback(
     (vc: VictoryCondition, j: number) => {
@@ -101,7 +100,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
     if (selected && validMoves.some(m => m.row === row && m.col === col)) {
       const movingPiece = pieces.find(p => p.row === selected.row && p.col === selected.col);
       if (!movingPiece) return;
-      const pt = pieceTypes.find(t => t.id === movingPiece.pieceTypeId);
+      const pt = pieceTypes.find(t => t.code === movingPiece.pieceTypeCode);
       if (!pt) return;
 
       let newPieces = pieces.filter(p => !(p.row === selected.row && p.col === selected.col));
@@ -126,7 +125,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
     //Seleccion
     const clickedPiece = pieces.find(p => p.row === row && p.col === col && p.player === turn);
     if (clickedPiece) {
-      const pt = pieceTypes.find(t => t.id === clickedPiece.pieceTypeId);
+      const pt = pieceTypes.find(t => t.code === clickedPiece.pieceTypeCode);
       if (!pt) return;
       const { moves } = getValidMoves(clickedPiece, pt, pieces, boardRows, boardCols);
       setPlayState({ ...playState, selected: { row, col }, validMoves: moves });
@@ -141,8 +140,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
-      isPlaying, playState, startGame, stopGame, handlePlayClick,
-      boardPieceIds, addBoardPieceId, removeBoardPieceId
+      isPlaying, playState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes
     }}>
       {children}
     </Ctx.Provider>

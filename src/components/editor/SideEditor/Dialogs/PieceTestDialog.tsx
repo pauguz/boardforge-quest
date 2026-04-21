@@ -7,21 +7,21 @@ import { cn } from "@/lib/utils";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
-  pieceTypeId: string | null;
+  pieceTypeCode: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
 
-export function PieceTestDialog({ pieceTypeId, open, onOpenChange }: Props) {
+export function PieceTestDialog({ pieceTypeCode, open, onOpenChange }: Props) {
   const { boardRows, boardCols } = useGameEditor();
   const { pieceTypes,} = useGeneralEditor();
-  const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
+  const pieceType = pieceTypes.find(pt => pt.code === pieceTypeCode);
   const [testPos, setTestPos] = useState<Position>({ row: Math.floor(boardRows / 2), col: Math.floor(boardCols / 2) });
   const [showMoves, setShowMoves] = useState(false);
 
   const validMoves = useMemo(() => {
     if (!pieceType || !showMoves) return [];
-    const testPiece: BoardPiece = { pieceTypeId: pieceType.id, player: 1, row: testPos.row, col: testPos.col };
+    const testPiece: BoardPiece = { pieceTypeCode: pieceType.code, player: 1, row: testPos.row, col: testPos.col };
     const { moves } = getValidMoves(testPiece, pieceType, [testPiece], boardRows, boardCols);
     return moves;
   }, [pieceType, testPos, showMoves, boardRows, boardCols]);

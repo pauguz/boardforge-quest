@@ -11,17 +11,17 @@ const OptionSideBar = () => {
         selectedMenuId, setSelectedMenuId
       } = useGeneralEditor();
   const sections: menuType[] = [
-    { id: '1', imageUrl: ChessPawn, name: 'Fichas'},
-    { id: '2', imageUrl: Grid2X2, name: 'Victoria'},
-    { id: '3', imageUrl: UsersIcon, name: 'Jugadores'},
-    { id: '4', imageUrl: DollarSign, name: 'Donaciones'},
+    { code: '1', imageUrl: ChessPawn, name: 'Fichas'},
+    { code: '2', imageUrl: Grid2X2, name: 'Victoria'},
+    { code: '3', imageUrl: UsersIcon, name: 'Jugadores'},
+    { code: '4', imageUrl: DollarSign, name: 'Donaciones'},
   ];
 
   return (
     <div  className="flex flex-col">
       <div className="flex flex-1 flex-col p-2 justify-around">
       {sections.map(sec => (
-          <SideItem key={sec.id} gen={sec} bloqueo={isPlaying} selectedID={selectedMenuId} selection={setSelectedMenuId} /> 
+          <SideItem key={sec.code} gen={sec} bloqueo={isPlaying} selectedID={selectedMenuId} selection={setSelectedMenuId} /> 
         ))  }
       </div>
     </div>

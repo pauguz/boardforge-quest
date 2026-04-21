@@ -25,7 +25,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   const {pieceTypes,} = useGeneralEditor();
 
   const [mode, setMode] = useState<'arrival' | 'capture'>('capture');
-  const [pieceTypeId, setPieceTypeId] = useState('');
+  const [pieceTypeCode, setPieceTypeCode] = useState('');
   const [targetCells, setTargetCells] = useState<Position[]>([]);
   const [player, setPlayer] = useState(plyr);
 
@@ -37,14 +37,14 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   };
 
   const handleAdd = () => {
-    if (!pieceTypeId) return;
+    if (!pieceTypeCode) return;
     const vc: VictoryCondition = {
-      mode, pieceTypeId,
+      mode, pieceTypeCode: pieceTypeCode,
       ...(mode === 'arrival' ? { targetCells: [...targetCells] } : {}),
     };
     addVictoryCondition(vc, player-1);
     setTargetCells([]);
-    setPieceTypeId('');
+    setPieceTypeCode('');
   };
 
   const cellSize = Math.min(Math.floor(320 / Math.max(boardRows, boardCols)), 28);
@@ -63,7 +63,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
               <div key={i} className="flex items-center justify-between p-2 bg-secondary rounded text-sm">
                 <span>
                   {vc.mode === 'arrival' ? '🏁 Llegada' : '⚔️ Captura'}:{' '}
-                  {pieceTypes.find(pt => pt.id === vc.pieceTypeId)?.name || '?'}
+                  {pieceTypes.find(pt => pt.code === vc.pieceTypeCode)?.name || '?'}
                   {vc.targetCells && ` (${vc.targetCells.length} casillas)`}
                 </span>
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(i, player-1) }}>
@@ -86,13 +86,13 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
               onClick={() => setMode('capture')}>Extinción</Button>
           </div>
 
-          <Select value={pieceTypeId} onValueChange={setPieceTypeId}>
+          <Select value={pieceTypeCode} onValueChange={setPieceTypeCode}>
             <SelectTrigger className="h-8">
               <SelectValue placeholder="Seleccionar tipo de ficha" />
             </SelectTrigger>
             <SelectContent>
               {pieceTypes.map(pt => (
-                <SelectItem key={pt.id} value={pt.id}>{pt.name}</SelectItem>
+                <SelectItem key={pt.code} value={pt.code}>{pt.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -126,7 +126,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
           )}
 
           <Button onClick={handleAdd} size="sm" className="w-full"
-            disabled={!pieceTypeId || (mode === 'arrival' && targetCells.length === 0)}>
+            disabled={!pieceTypeCode || (mode === 'arrival' && targetCells.length === 0)}>
             Agregar condición
           </Button>
 

@@ -51,7 +51,7 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGame = async (localId, nombre, alto, ancho, codigo, handleResult:Function)=>{
+export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo, handleResult:Function)=>{
   try{
     console.log("Creando sala con codigo", codigo);
     console.log(nombre, alto, ancho)

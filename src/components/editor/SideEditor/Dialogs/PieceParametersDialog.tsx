@@ -12,18 +12,18 @@ import { findDirections } from "@/utils/movement";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
-  pieceTypeId: string | null;
+  pieceTypeCode: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
 
-export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props) {
+export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Props) {
   const { pieceTypes, updatePieceType } = useGeneralEditor();
-  const pieceType = pieceTypes.find(pt => pt.id === pieceTypeId);
+  const pieceType = pieceTypes.find(pt => pt.code === pieceTypeCode);
 
   const [dx, setDx] = useState(0);
   const [dy, setDy] = useState(0);
-  const [moveType, setMoveType] = useState<'unit' |'range' | 'indefinite'>('range');
+  const [moveType, setMoveType] = useState<'range' | 'indefinite'>('range');
   const [range, setRange] = useState(2);
   const [rotate, setRotate] = useState(false);
 
@@ -36,17 +36,17 @@ export function PieceParametersDialog({ pieceTypeId, open, onOpenChange }: Props
       ...(moveType === 'range' ? { range } : {}), rotate,
     };
     if ( findDirections(pieceType, rule.direction) ) return;
-    updatePieceType(pieceType.id, { movements: [...pieceType.movements, rule] });
+    updatePieceType(pieceType.code, { movements: [...pieceType.movements, rule] });
   };
 
   const removeMovement = (index: number) => {
-    updatePieceType(pieceType.id, {
+    updatePieceType(pieceType.code, {
       movements: pieceType.movements.filter((_, i) => i !== index),
     });
   };
 
   const setCaptureMode = (mode: CaptureMode) => {
-    updatePieceType(pieceType.id, { captureMode: mode });
+    updatePieceType(pieceType.code, { captureMode: mode });
   };
 
   const typeLabel = (t: string, r?: number) =>

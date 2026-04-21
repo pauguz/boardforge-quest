@@ -1,5 +1,5 @@
 import { PieceType } from '@/types/game';
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 
 interface GeneralEditorContextType {
@@ -9,11 +9,11 @@ interface GeneralEditorContextType {
   selectedTab: number;
   setSelectedTab: (t:number) => void;
   pieceTypes: PieceType[];
-  addPieceType: (name: string, imageUrl: string) => void;
+  addPieceType: (name: string, imageUrl: string, imageFile:File) => void;
   updatePieceType: (id: string, updates: Partial<PieceType>) => void;
   removePieceType: (id: string) => void;
-  selectedPieceTypeId: string | null;
-  setSelectedPieceTypeId: (id: string | null) => void;
+  selectedPieceTypeCode: string | null;
+  setSelectedPieceTypeCode: (id: string | null) => void;
   selectedMenuId: string | null;
   setSelectedMenuId: (id: string | null) => void;
   lastRemoval: { payload: any; id: number } | null;
@@ -28,10 +28,12 @@ export function useGeneralEditor() {
   return ctx;
 }
 
+
+
 const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
     const [status, setStatus] = useState<1|2|3>(1);
     const [lastRemoval, setLastRemoval] = useState<{ payload: any; id: number } | null>(null);
-    const [selectedPieceTypeId, setSelectedPieceTypeId] = useState<string | null>(null);
+    const [selectedPieceTypeCode, setSelectedPieceTypeCode] = useState<string | null>(null);
     const [selectedMenuId, setSelectedMenuId] = useState<string | null>('1');
     const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
     const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -42,25 +44,26 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
       setLastRemoval({ payload: data, id: Date.now() });
     };
 
-    const addPieceType = useCallback((name: string, imageUrl: string) => {
+    const addPieceType = useCallback((name: string, imageUrl: string, imageFile:File) => {
       setPieceTypes(prev => [...prev, {
-        id: crypto.randomUUID(), name, imageUrl, movements: [], captureMode: 'indian',
+        code: crypto.randomUUID(), name, imageUrl, movements: [], captureMode: 'indian', imageFile
       }]);
     }, []);
 
     const updatePieceType = useCallback((id: string, updates: Partial<PieceType>) => {
-      setPieceTypes(prev => prev.map(pt => pt.id === id ? { ...pt, ...updates } : pt));
+      setPieceTypes(prev => prev.map(pt => pt.code === id ? { ...pt, ...updates } : pt));
     }, []);
 
     const removePieceType = useCallback((id: string) => {
-      setPieceTypes(prev => prev.filter(pt => pt.id !== id));
+      setPieceTypes(prev => prev.filter(pt => pt.code !== id));
       triggerAction(id);
     }, []);
     
 
+
   
   return (
-    <Ctx.Provider value={{selectedMenuId, setSelectedMenuId, selectedPieceTypeId, setSelectedPieceTypeId,
+    <Ctx.Provider value={{selectedMenuId, setSelectedMenuId, selectedPieceTypeCode , setSelectedPieceTypeCode,
       updatePieceType, addPieceType, removePieceType, pieceTypes, status, setStatus,
       selectedTab, setSelectedTab, lastRemoval
      }}>

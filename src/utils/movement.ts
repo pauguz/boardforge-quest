@@ -158,7 +158,7 @@ export function checkVictory(
   for (const vc of conditions) {
     if (vc.mode === 'arrival' && vc.targetCells) {
       for (const p of currentPieces) {
-        if (p.pieceTypeId === vc.pieceTypeId) {
+        if (p.pieceTypeCode === vc.pieceTypeCode) {
           if (vc.targetCells.some(t => t.row === p.row && t.col === p.col && p.player===plyr)) {
             return p.player;
           }
@@ -167,11 +167,11 @@ export function checkVictory(
     } else if (vc.mode === 'capture') {
       for (const player of [1, 2] as const) {
         const hadInitially = initialPieces.some(
-          p => p.pieceTypeId === vc.pieceTypeId && p.player === player
+          p => p.pieceTypeCode === vc.pieceTypeCode && p.player === player
         );
         if (!hadInitially) continue;
         const hasNow = currentPieces.some(
-          p => p.pieceTypeId === vc.pieceTypeId && p.player === player
+          p => p.pieceTypeCode === vc.pieceTypeCode && p.player === player
         );
         if (!hasNow) return player === 1 ? 2 : 1;
       }

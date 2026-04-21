@@ -20,10 +20,10 @@ const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: Side
 
   return (
     <div
-      onClick={() => !bloqueo && selection(gen.id)}
+      onClick={() => !bloqueo && selection(gen.code)}
       className={cn(
         "flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors",
-        selectedID === gen.id && "bg-accent ring-1 ring-primary"
+        selectedID === gen.code && "bg-accent ring-1 ring-primary"
       )}
     >
       {isPiece ? (
@@ -47,7 +47,7 @@ const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: Side
           variant="ghost" 
           size="icon" 
           className="h-6 w-6 opacity-50 hover:opacity-100"
-          onClick={e => { e.stopPropagation(); remotion(gen.id); }}
+          onClick={e => { e.stopPropagation(); remotion(gen.code); }}
         >
           <Trash2 className="w-3 h-3" />
         </Button>

@@ -12,6 +12,7 @@ import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { supabase } from '../../utils/supabaseClient';
 import { countRoomsperUser, createRoomwithGame } from "../../../services/salaServic";
 import { dummy } from "@/utils/dummy";
+import { stringify } from "querystring";
 
 
 export function TopBar() {
@@ -19,14 +20,14 @@ export function TopBar() {
     boardRows, boardCols, setBoardRows, setBoardCols,
     currentPlayer, setCurrentPlayer,
     isPlaying, startGame, stopGame, playState,
-    boardPieces, victoryConditions,
+    boardPieces, victoryConditions, getBoardPieceTypeCodes
   } = useGameEditor();
 
   const {pieceTypes, status, setStatus} = useGeneralEditor();
   
   const [showVictory, setShowVictory] = useState(false);
   
-  const createRoom = async (alt:number, anc:number ) => {
+  const createRoom = async (alt:number, anc:number, dispin:string='[]' ) => {
     if( ! localStorage.getItem("creador")){
       localStorage.setItem('creador', crypto.randomUUID());
     }
@@ -42,20 +43,21 @@ export function TopBar() {
       const ventana = (data)=>{      
         window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
       }
-      createRoomwithGame(creatorId, 'juego',alt, anc, codSala, ventana );
+      createRoomwithGame(creatorId, 'juego',alt, anc, dispin ,codSala, ventana );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 
     };
 
   const handleDownload=()=>{
+    console.log('Inicio descarga ', 'status ', status);
     if(status==3){
       const html = exportGameAsHTML(boardRows, boardCols, pieceTypes, boardPieces, victoryConditions);
       const blob = new Blob([html], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'juego-de-mesa.html';
+      a.download = 'juego.html';
       a.click();
       URL.revokeObjectURL(url);
     } else if (status==1) setStatus(2);
@@ -104,7 +106,7 @@ export function TopBar() {
         </Button>
 
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
-        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an);}}
+        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, JSON.stringify(getBoardPieceTypeCodes) );}}
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>

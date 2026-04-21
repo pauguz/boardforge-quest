@@ -19,13 +19,14 @@ export function PieceSidebar() {
 
 
 
-  const {selectedPieceTypeId, setSelectedPieceTypeId}= useGeneralEditor();
+  const {selectedPieceTypeCode, setSelectedPieceTypeCode}= useGeneralEditor();
 
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [paramsId, setParamsId] = useState<string | null>(null);
   const [testId, setTestId] = useState<string | null>(null);
   const [pendingName, setPendingName] = useState<string|null>(null);
+  const [pendingFile, setPendingFile] = useState<File|null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,23 +36,25 @@ export function PieceSidebar() {
     // 1. Extraer el nombre y quitarle la extensión 
     const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
     
-    // 2. Guardar el nombre en el estado
+    // 2. Guardar el nombre y el archivo en el estado
     setPendingName(fileNameWithoutExtension);
-  
+    setPendingFile(file);
+
     const reader = new FileReader();
     reader.onload = () => {
       setPendingImage(reader.result as string);
       setShowNameDialog(true);
     };
     reader.readAsDataURL(file);
-  
+ 
+
     // Limpiar el input para permitir subir el mismo archivo después si se desea
-    e.target.value = '';
+    //e.target.value = '';
   };
 
   const handleCreate = (name:string) => {
     if (pendingImage) {
-      addPieceType(name, pendingImage);
+      addPieceType(name, pendingImage, pendingFile);
       setShowNameDialog(false);
       setPendingImage(null);
     }
@@ -70,14 +73,14 @@ export function PieceSidebar() {
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {pieceTypes.map(pt => (
-          <ContextMenu key={pt.id}>
+          <ContextMenu key={pt.code}>
             <ContextMenuTrigger>
-              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeId} selection={setSelectedPieceTypeId} /> 
+              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeCode} selection={setSelectedPieceTypeCode} /> 
 
             </ContextMenuTrigger>
             <ContextMenuContent>
-              <ContextMenuItem onClick={() => setParamsId(pt.id)}>Parámetros</ContextMenuItem>
-              <ContextMenuItem onClick={() => setTestId(pt.id)}>Pruebas</ContextMenuItem>
+              <ContextMenuItem onClick={() => setParamsId(pt.code)}>Parámetros</ContextMenuItem>
+              <ContextMenuItem onClick={() => setTestId(pt.code)}>Pruebas</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
         ))  }
@@ -88,11 +91,11 @@ export function PieceSidebar() {
         )}
       </div>
 
-      {selectedPieceTypeId && (
+      {selectedPieceTypeCode && (
         <div className="p-2 border-t border-border text-xs text-muted-foreground text-center">
-          Seleccionada: {pieceTypes.find(pt => pt.id === selectedPieceTypeId)?.name}
+          Seleccionada: {pieceTypes.find(pt => pt.code === selectedPieceTypeCode)?.name}
           <Button variant="link" size="sm" className="text-xs ml-1"
-            onClick={() => {setSelectedPieceTypeId(null), console.log(pieceTypes)}}>
+            onClick={() => {setSelectedPieceTypeCode(null), console.log(pieceTypes)}}>
             Deseleccionar
           </Button>
         </div>
@@ -102,11 +105,12 @@ export function PieceSidebar() {
             onOpenChange={setShowNameDialog}
             imageUrl={pendingImage}
             imageName={pendingName}
+            imageFile={pendingFile}
             onConfirm={handleCreate}
           />
 
-      <PieceParametersDialog pieceTypeId={paramsId} open={!!paramsId} onOpenChange={v => !v && setParamsId(null)} />
-      <PieceTestDialog pieceTypeId={testId} open={!!testId} onOpenChange={v => !v && setTestId(null)} />
+      <PieceParametersDialog pieceTypeCode={paramsId} open={!!paramsId} onOpenChange={v => !v && setParamsId(null)} />
+      <PieceTestDialog pieceTypeCode={testId} open={!!testId} onOpenChange={v => !v && setTestId(null)} />
     </div>
   );
 }
