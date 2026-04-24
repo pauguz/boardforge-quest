@@ -49,7 +49,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
 
   const {pieceTypes, selectedPieceTypeCode}=useGeneralEditor();
 
-  const getBoardPieceTypeCodes = useCallback(
+  const getBoardPieceTypes = useCallback(
     ()=>{return  getUtilPieceTypes(boardPieces, pieceTypes);}, 
     [boardPieces, pieceTypes]
   )
@@ -140,7 +140,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
-      isPlaying, playState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes
+      isPlaying, playState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes: getBoardPieceTypes
     }}>
       {children}
     </Ctx.Provider>

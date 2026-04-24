@@ -1,5 +1,6 @@
 import { AlertOctagon } from 'lucide-react';
-import {supabase} from '../src/utils/supabaseClient'
+import {supabase} from '../utils/supabaseClient'
+import { PieceType } from '@/types/game';
 
     // 1. Definimos la función asíncrona DENTRO del useEffect
 export const obtenerDatos = async (roomId:string, Carga:Function, handleResult:Function, handleError:Function ) => {
@@ -51,7 +52,7 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo, handleResult:Function)=>{
+export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo, pts:PieceType[] ,handleResult:Function)=>{
   try{
     console.log("Creando sala con codigo", codigo);
     console.log(nombre, alto, ancho)

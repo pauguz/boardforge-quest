@@ -18,6 +18,7 @@ export interface PieceType {
   imageUrl: string;
   movements: MovementRule[];
   captureMode: CaptureMode;
+  imageFile: File;
 }
 
 export interface BoardPiece {

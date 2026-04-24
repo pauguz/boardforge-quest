@@ -13,6 +13,7 @@ import { supabase } from '../../utils/supabaseClient';
 import { countRoomsperUser, createRoomwithGame } from "../../../services/salaServic";
 import { dummy } from "@/utils/dummy";
 import { stringify } from "querystring";
+import { PieceType } from "@/types/game";
 
 
 export function TopBar() {
@@ -27,7 +28,7 @@ export function TopBar() {
   
   const [showVictory, setShowVictory] = useState(false);
   
-  const createRoom = async (alt:number, anc:number, dispin:string='[]' ) => {
+  const createRoom = async (alt:number, anc:number, dispin:PieceType[] ) => {
     if( ! localStorage.getItem("creador")){
       localStorage.setItem('creador', crypto.randomUUID());
     }
@@ -106,7 +107,7 @@ export function TopBar() {
         </Button>
 
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
-        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, JSON.stringify(getBoardPieceTypeCodes) );}}
+        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, getBoardPieceTypeCodes );}}
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>

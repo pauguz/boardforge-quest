@@ -8,10 +8,11 @@ interface CreatePieceDialogProps {
   onOpenChange: (open: boolean) => void;
   imageUrl: string | null;
   imageName: string | null;
+  imageFile: File|null;
   onConfirm: (name: string) => void;
 }
 
-export function CreatePieceDialog({ open, onOpenChange, imageUrl, imageName, onConfirm }: CreatePieceDialogProps) {
+export function CreatePieceDialog({ open, onOpenChange, imageUrl, imageName, imageFile, onConfirm }: CreatePieceDialogProps) {
   const [name, setName] = useState("");
 
   // Limpiar el input cada vez que el diálogo se cierra o se abre con nueva imagen
