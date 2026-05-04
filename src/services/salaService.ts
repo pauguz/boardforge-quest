@@ -52,20 +52,18 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo, pts:PieceType[] ,handleResult:Function)=>{
+export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo,handleResult:Function)=>{
   try{
     console.log("Creando sala con codigo", codigo);
     console.log(nombre, alto, ancho)
-    const {data, error} = await supabase.rpc("create_room_with_game", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_codigo:codigo, p_ip:'1'}).setHeader("local-id", localId);
+    const {data, error} = await supabase.rpc("create_room_with_game", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_codigo:codigo, p_ip:'1', p_dispin: dispin}).setHeader("local-id", localId);
     handleResult(data);
     console.log(data);
     console.log(error);
   }catch(err){console.log(err)}
 }
 
-const getRoomNumber = async(localId:string)=>{
-  
-}
+
 
 //En esta version supones que el boardRows y boardCols llegan ya en binario
 // NOTE: legacy/unused helper. Cast to any to bypass strict typing of the

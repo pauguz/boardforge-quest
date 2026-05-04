@@ -5,7 +5,7 @@ import { PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, obtenerDatos, deleteRoom } from '../../services/salaServic.ts'
+import {verifyAuthorship, obtenerDatos, deleteRoom } from '../services/salaService.ts'
 import { incremento, localInt } from '@/utils/roomId.ts';
 
 

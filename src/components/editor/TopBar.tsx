@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { generateRoomId, toBinaryString, incremento, localInt } from "@/utils/roomId";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { supabase } from '../../utils/supabaseClient';
-import { countRoomsperUser, createRoomwithGame } from "../../../services/salaServic";
+import { createRoomwithGame } from "../../services/salaService";
 import { dummy } from "@/utils/dummy";
 import { stringify } from "querystring";
 import { PieceType } from "@/types/game";
