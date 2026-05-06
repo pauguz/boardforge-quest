@@ -192,36 +192,65 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      create_room_with_game: {
-        Args: {
-          p_alto: unknown
-          p_ancho: unknown
-          p_codigo: string
-          p_ip: string
-          p_nombre: string
-        }
-        Returns: {
-          codigo: string | null
-          creador_id: string | null
-          created_at: string | null
-          enjuego: unknown
-          id: number
-          ip: string | null
-          juego_id: number | null
-          turn: number | null
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "sala"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
+      create_room_with_game:
+        | {
+            Args: {
+              p_alto: unknown
+              p_ancho: unknown
+              p_codigo: string
+              p_dispin?: Json
+              p_ip: string
+              p_nombre: string
+            }
+            Returns: {
+              codigo: string | null
+              creador_id: string | null
+              created_at: string | null
+              enjuego: unknown
+              id: number
+              ip: string | null
+              juego_id: number | null
+              turn: number | null
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "sala"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
+        | {
+            Args: {
+              p_alto: unknown
+              p_ancho: unknown
+              p_codigo: string
+              p_dispin: Json
+              p_fichero?: Json
+              p_ip: string
+              p_nombre: string
+            }
+            Returns: {
+              codigo: string | null
+              creador_id: string | null
+              created_at: string | null
+              enjuego: unknown
+              id: number
+              ip: string | null
+              juego_id: number | null
+              turn: number | null
+            }[]
+            SetofOptions: {
+              from: "*"
+              to: "sala"
+              isOneToOne: false
+              isSetofReturn: true
+            }
+          }
       debug_headers: { Args: never; Returns: Json }
       is_owner: { Args: { room_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      cm: "eur" | "ind"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -348,6 +377,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      cm: ["eur", "ind"],
+    },
   },
 } as const
