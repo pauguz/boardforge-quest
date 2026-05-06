@@ -107,7 +107,7 @@ export function TopBar() {
         </Button>
 
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
-        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, getBoardPieceTypeCodes );}}
+        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, getBoardPieceTypeCodes() );}}
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>
