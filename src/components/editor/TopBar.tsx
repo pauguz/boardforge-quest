@@ -84,8 +84,8 @@ export function TopBar() {
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
         onClick={()=>{ const al=toBinaryString(boardRows); 
                        const an=toBinaryString(boardCols) ;
-                       console.log(playState, boardRows, boardCols);
-                       SendRoomData(al, an, toDispin(playState) ,getBoardPieceTypeCodes() );}
+                       console.log(boardPieces, boardRows, boardCols);
+                       SendRoomData(al, an, toDispin(boardPieces) ,getBoardPieceTypeCodes() );}
                   }
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
