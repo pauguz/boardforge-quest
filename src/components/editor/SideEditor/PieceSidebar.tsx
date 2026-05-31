@@ -54,7 +54,8 @@ export function PieceSidebar() {
 
   const handleCreate = (name:string) => {
     if (pendingImage) {
-      addPieceType(name, pendingImage, pendingFile);
+      console.log("pendingImage", pendingImage.slice(0, 50));
+      addPieceType(name, pendingImage);
       setShowNameDialog(false);
       setPendingImage(null);
     }
@@ -76,7 +77,6 @@ export function PieceSidebar() {
           <ContextMenu key={pt.code}>
             <ContextMenuTrigger>
               <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeCode} selection={setSelectedPieceTypeCode} /> 
-
             </ContextMenuTrigger>
             <ContextMenuContent>
               <ContextMenuItem onClick={() => setParamsId(pt.code)}>Parámetros</ContextMenuItem>
@@ -105,7 +105,6 @@ export function PieceSidebar() {
             onOpenChange={setShowNameDialog}
             imageUrl={pendingImage}
             imageName={pendingName}
-            imageFile={pendingFile}
             onConfirm={handleCreate}
           />
 

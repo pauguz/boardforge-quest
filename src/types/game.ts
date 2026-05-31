@@ -10,15 +10,15 @@ export interface MovementRule {
   rotate: boolean;
 }
 
-export type CaptureMode = 'indian' | 'european';
+export type CaptureMode = 'ind' | 'eur';
 
 export interface PieceType {
   code: string;
   name: string;
+  simbolo: string;
   imageUrl: string;
-  movements: MovementRule[];
-  captureMode: CaptureMode;
-  imageFile: File;
+  moves: MovementRule[];
+  captura_modo: CaptureMode;
 }
 
 export interface BoardPiece {
@@ -52,6 +52,19 @@ export interface PlayState {
 
 
 export function getUtilPieceTypes(bps: BoardPiece[], bts: PieceType[]){
-  const generosUnicos = [...new Set(bps.map(c => c.pieceTypeCode))];
-  return   bts.filter(reg => generosUnicos.includes(reg.code));
+  const tiposUnicos = [...new Set(bps.map(c => c.pieceTypeCode))];
+  return   bts.filter(bt => tiposUnicos.includes(bt.code));
 }
+
+export function toDispin(state: PlayState): string {
+
+  const dispin = state.initialPieces.map(piece => ({
+    code:   piece.pieceTypeCode,
+    player: piece.player,
+    row:    piece.row,
+    col:    piece.col,
+  }));
+
+  return JSON.stringify(dispin);
+}
+

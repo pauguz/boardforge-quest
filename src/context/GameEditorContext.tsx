@@ -104,13 +104,13 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       if (!pt) return;
 
       let newPieces = pieces.filter(p => !(p.row === selected.row && p.col === selected.col));
-      if (pt.captureMode === 'indian') {
+      if (pt.captura_modo === 'ind') {
         newPieces = newPieces.filter(p => !(p.row === row && p.col === col));
       }
       const movedPiece = { ...movingPiece, row, col };
       newPieces.push(movedPiece);
 
-      if (pt.captureMode === 'european') {
+      if (pt.captura_modo === 'eur') {
         const ec = getEuropeanCaptures({ row, col }, turn, newPieces);
         newPieces = newPieces.filter(p => !ec.some(c => c.row === p.row && c.col === p.col));
       }

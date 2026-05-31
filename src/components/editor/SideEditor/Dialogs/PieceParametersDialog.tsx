@@ -36,17 +36,17 @@ export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Pro
       ...(moveType === 'range' ? { range } : {}), rotate,
     };
     if ( findDirections(pieceType, rule.direction) ) return;
-    updatePieceType(pieceType.code, { movements: [...pieceType.movements, rule] });
+    updatePieceType(pieceType.code, { moves: [...pieceType.moves, rule] });
   };
 
   const removeMovement = (index: number) => {
     updatePieceType(pieceType.code, {
-      movements: pieceType.movements.filter((_, i) => i !== index),
+      moves: pieceType.moves.filter((_, i) => i !== index),
     });
   };
 
   const setCaptureMode = (mode: CaptureMode) => {
-    updatePieceType(pieceType.code, { captureMode: mode });
+    updatePieceType(pieceType.code, { captura_modo: mode });
   };
 
   const typeLabel = (t: string, r?: number) =>
@@ -65,12 +65,12 @@ export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Pro
       <div className="space-y-2">
         <p className="text-sm font-medium">Movimientos</p>
 
-        {pieceType.movements.length === 0 ? (
+        {pieceType.moves.length === 0 ? (
           <p className="text-xs text-muted-foreground">
             Sin movimientos configurados
           </p>
         ) : (
-          pieceType.movements.map((m, i) => (
+          pieceType.moves.map((m, i) => (
             <div
               key={i}
               className="flex items-center gap-2 p-2 bg-secondary rounded text-sm flex-wrap"
@@ -145,17 +145,17 @@ export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Pro
         <div className="space-y-2">
           <p className="text-sm font-medium">Modo de captura</p>
           <div className="flex gap-2">
-            <Button variant={pieceType.captureMode === 'indian' ? 'default' : 'outline'} size="sm"
-              onClick={() => setCaptureMode('indian')}>
+            <Button variant={pieceType.captura_modo === 'ind' ? 'default' : 'outline'} size="sm"
+              onClick={() => setCaptureMode('ind')}>
               Indio (reemplazo)
             </Button>
-            <Button variant={pieceType.captureMode === 'european' ? 'default' : 'outline'} size="sm"
-              onClick={() => setCaptureMode('european')}>
+            <Button variant={pieceType.captura_modo === 'eur' ? 'default' : 'outline'} size="sm"
+              onClick={() => setCaptureMode('eur')}>
               Europeo (pinza)
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            {pieceType.captureMode === 'indian'
+            {pieceType.captura_modo === 'ind'
               ? "La ficha se mueve a la casilla del enemigo, eliminándolo."
               : "La ficha captura al enemigo si queda atrapado entre dos fichas aliadas."}
           </p>

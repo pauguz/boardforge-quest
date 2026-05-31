@@ -9,7 +9,7 @@ interface GeneralEditorContextType {
   selectedTab: number;
   setSelectedTab: (t:number) => void;
   pieceTypes: PieceType[];
-  addPieceType: (name: string, imageUrl: string, imageFile:File) => void;
+  addPieceType: (name: string, imageUrl: string) => void;
   updatePieceType: (id: string, updates: Partial<PieceType>) => void;
   removePieceType: (id: string) => void;
   selectedPieceTypeCode: string | null;
@@ -44,9 +44,9 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
       setLastRemoval({ payload: data, id: Date.now() });
     };
 
-    const addPieceType = useCallback((name: string, imageUrl: string, imageFile:File) => {
+    const addPieceType = useCallback((name: string, imageUrl: string) => {
       setPieceTypes(prev => [...prev, {
-        code: crypto.randomUUID(), name, imageUrl, movements: [], captureMode: 'indian', imageFile
+        code: crypto.randomUUID(), name, imageUrl, moves: [], captura_modo: 'ind',simbolo: name[0] 
       }]);
     }, []);
 
