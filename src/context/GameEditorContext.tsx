@@ -19,6 +19,7 @@ interface GameEditorContextType {
   removeVictoryCondition: (j:number, i: number) => void;
   isPlaying: boolean;
   playState: PlayState | null;
+  createInitialPlayState: () => PlayState;
   startGame: () => void;
   stopGame: () => void;
   handlePlayClick: (row: number, col: number) => void;
@@ -76,17 +77,22 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
     []
   );
 
-  const startGame = useCallback(() => {
-    setIsPlaying(true);
-    setPlayState({
-      pieces: boardPieces.map(p => ({ ...p })),
+  const createInitialPlayState = useCallback((): PlayState => {
+    const initialPieces = boardPieces.map(p => ({ ...p }));
+    return {
+      pieces: initialPieces.map(p => ({ ...p })),
       turn: 1,
       selected: null,
       validMoves: [],
       winner: null,
-      initialPieces: boardPieces.map(p => ({ ...p })),
-    });
+      initialPieces,
+    };
   }, [boardPieces]);
+
+  const startGame = useCallback(() => {
+    setIsPlaying(true);
+    setPlayState(createInitialPlayState());
+  }, [createInitialPlayState]);
 
   const stopGame = useCallback(() => {
     setIsPlaying(false);
@@ -140,7 +146,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
-      isPlaying, playState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes: getBoardPieceTypes
+      isPlaying, playState, createInitialPlayState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes: getBoardPieceTypes
     }}>
       {children}
     </Ctx.Provider>

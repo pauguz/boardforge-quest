@@ -19,7 +19,7 @@ export function TopBar() {
   const {
     boardRows, boardCols, setBoardRows, setBoardCols,
     currentPlayer, setCurrentPlayer,
-    isPlaying, startGame, stopGame, playState,
+    isPlaying, startGame, stopGame, playState, createInitialPlayState,
     boardPieces, victoryConditions, getBoardPieceTypeCodes
   } = useGameEditor();
 
@@ -84,8 +84,9 @@ export function TopBar() {
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
         onClick={()=>{ const al=toBinaryString(boardRows); 
                        const an=toBinaryString(boardCols) ;
-                       console.log(boardPieces, boardRows, boardCols);
-                       SendRoomData(al, an, toDispin(boardPieces) ,getBoardPieceTypeCodes() );}
+                       const initialState = playState ?? createInitialPlayState();
+                       console.log(initialState, boardRows, boardCols);
+                       SendRoomData(al, an, toDispin(initialState) ,getBoardPieceTypeCodes() );}
                   }
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
