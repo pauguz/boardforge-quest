@@ -7,14 +7,13 @@ import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
-import { generateRoomId, toBinaryString, incremento, localInt } from "@/utils/roomId";
+import { generateRoomId, toBinaryString, incremento, localInt, ficheroToBlob } from "@/utils/roomId";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { supabase } from '../../utils/supabaseClient';
-import { createRoomwithGame } from "../../services/salaService";
+import { createRoomwithGame, createRoomwithGameIL, SendRoomData } from "../../services/salaService";
 import { dummy } from "@/utils/dummy";
 import { stringify } from "querystring";
-import { PieceType } from "@/types/game";
-
+import { PieceType, toDispin } from "@/types/game";
 
 export function TopBar() {
   const {
@@ -25,30 +24,7 @@ export function TopBar() {
   } = useGameEditor();
 
   const {pieceTypes, status, setStatus} = useGeneralEditor();
-  
   const [showVictory, setShowVictory] = useState(false);
-  
-  const createRoom = async (alt:number, anc:number, dispin:PieceType[] ) => {
-    if( ! localStorage.getItem("creador")){
-      localStorage.setItem('creador', crypto.randomUUID());
-    }
-
-    const creatorId =localStorage.getItem("creador");
-    
-    const sc:number= localInt("salasCreadas") || 0;
-    console.log("Tienes ", sc, " salas creadas y el id con numero: ", creatorId );
-
-    if(sc<3){
-      const codSala = generateRoomId();
-      console.log('Iniciando Creacion de Sala y Juego, sc: ', sc)
-      const ventana = (data)=>{      
-        window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
-      }
-      createRoomwithGame(creatorId, 'juego',alt, anc, dispin ,codSala, ventana );
-      localStorage.setItem('salasCreadas', incremento(sc));
-      }
-
-    };
 
   const handleDownload=()=>{
     console.log('Inicio descarga ', 'status ', status);
@@ -62,7 +38,6 @@ export function TopBar() {
       a.click();
       URL.revokeObjectURL(url);
     } else if (status==1) setStatus(2);
-
   }
 
   return (
@@ -95,7 +70,7 @@ export function TopBar() {
             <Square className="w-4 h-4 mr-1" /> Detener
           </Button>
         ) : (
-          <Button size="sm" onClick={startGame} disabled={boardPieces.length === 0}>
+          <Button size="sm" onClick={()=>{console.log(playState); startGame()}} disabled={boardPieces.length === 0}>
             <Play className="w-4 h-4 mr-1" /> Correr
           </Button>
         )}
@@ -107,7 +82,11 @@ export function TopBar() {
         </Button>
 
         <Button size="sm" variant="outline" disabled={boardPieces.length === 0 || isPlaying}
-        onClick={()=>{ const al=toBinaryString(boardRows); const an=toBinaryString(boardCols) ;createRoom(al, an, getBoardPieceTypeCodes() );}}
+        onClick={()=>{ const al=toBinaryString(boardRows); 
+                       const an=toBinaryString(boardCols) ;
+                       console.log(playState, boardRows, boardCols);
+                       SendRoomData(al, an, toDispin(playState) ,getBoardPieceTypeCodes() );}
+                  }
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>

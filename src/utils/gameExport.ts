@@ -11,7 +11,7 @@ export function exportGameAsHTML(
     boardRows, boardCols,
     pieceTypes: pieceTypes.map(pt => ({
       id: pt.code, name: pt.name, imageUrl: pt.imageUrl,
-      movements: pt.movements, captureMode: pt.captureMode,
+      movements: pt.moves, captureMode: pt.captura_modo,
     })),
     pieces: pieces.map(p => ({
       pieceTypeId: p.pieceTypeCode, player: p.player, row: p.row, col: p.col,
@@ -71,7 +71,7 @@ for(let s=1;s<=max;s++){
 const r=piece.row+dir.dy*s,c=piece.col+dir.dx*s;
 if(r<0||r>=G.boardRows||c<0||c>=G.boardCols)break;
 const occ=S.pieces.find(p=>p.row===r&&p.col===c);
-if(occ){if(occ.player!==piece.player&&pt.captureMode==='indian'){moves.push({row:r,col:c});caps.push({row:r,col:c})}break}
+if(occ){if(occ.player!==piece.player&&pt.captureMode==='ind'){moves.push({row:r,col:c});caps.push({row:r,col:c})}break}
 moves.push({row:r,col:c})}}}return{moves,caps};
 }
 function euroCaps(pos,pl){
@@ -95,9 +95,9 @@ if(S.sel&&S.vm.some(m=>m.row===r&&m.col===c)){
 const mp=S.pieces.find(p=>p.row===S.sel.row&&p.col===S.sel.col);
 const pt=G.pieceTypes.find(t=>t.id===mp.pieceTypeId);
 S.pieces=S.pieces.filter(p=>!(p.row===S.sel.row&&p.col===S.sel.col));
-if(pt.captureMode==='indian')S.pieces=S.pieces.filter(p=>!(p.row===r&&p.col===c));
+if(pt.captureMode==='ind')S.pieces=S.pieces.filter(p=>!(p.row===r&&p.col===c));
 mp.row=r;mp.col=c;S.pieces.push(mp);
-if(pt.captureMode==='european'){const ec=euroCaps({row:r,col:c},S.turn);S.pieces=S.pieces.filter(p=>!ec.some(e=>e.row===p.row&&e.col===p.col))}
+if(pt.captureMode==='eur'){const ec=euroCaps({row:r,col:c},S.turn);S.pieces=S.pieces.filter(p=>!ec.some(e=>e.row===p.row&&e.col===p.col))}
 const w=chkWin(S.turn);
 if(w){S.winner=w;document.getElementById('winner').textContent='¡Jugador '+w+' ha ganado!';document.getElementById('restart').style.display='block'}
 S.turn=S.turn===1?2:1;S.sel=null;S.vm=[];

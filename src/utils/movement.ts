@@ -19,7 +19,7 @@ export function getRotations(dx: number, dy: number): Direction[] {
 
 export function findDirections(pt: PieceType, dir:Direction): boolean{
   let ret=false;
-  for (const n of pt.movements){
+  for (const n of pt.moves){
     ret = ret || (n.direction.dx===dir.dx && n.direction.dy===dir.dy)
     if (ret) break;
   }
@@ -93,7 +93,7 @@ export function getValidMoves(
   const moves: Position[] = [];
   const captures: Position[] = [];
 
-  for (const rule of pieceType.movements) {
+  for (const rule of pieceType.moves) {
     const dirs = rule.rotate
       ? getRotations(rule.direction.dx, rule.direction.dy)
       : [rule.direction];
@@ -110,7 +110,7 @@ export function getValidMoves(
 
         const occ = allPieces.find(p => p.row === r && p.col === c);
         if (occ) {
-          if (occ.player !== piece.player && pieceType.captureMode === 'indian') {
+          if (occ.player !== piece.player && pieceType.captura_modo === 'ind') {
             moves.push({ row: r, col: c });
             captures.push({ row: r, col: c });
           }

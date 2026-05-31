@@ -1,6 +1,9 @@
 import { AlertOctagon } from 'lucide-react';
-import {supabase} from '../utils/supabaseClient'
+import {supabase} from '../utils/supabaseClient';
+
 import { PieceType } from '@/types/game';
+import {base64ToBlob, ficheroToBlob, generateRoomId, incremento, localInt} from '../utils/roomId';
+
 
     // 1. Definimos la función asíncrona DENTRO del useEffect
 export const obtenerDatos = async (roomId:string, Carga:Function, handleResult:Function, handleError:Function ) => {
@@ -63,6 +66,43 @@ export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, c
   }catch(err){console.log(err)}
 }
 
+export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero ,dispin, codigo,handleResult:Function)=>{
+  try{
+    console.log("Creando sala con codigo", codigo);
+    console.log(nombre, alto, ancho)
+    const {data, error} = await supabase.rpc("create_room_with_game_il", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_piezas:fichero ,p_codigo:codigo, p_ip:'1', p_dispin: dispin, }).setHeader("local-id", localId);
+    handleResult(data);
+    console.log('dispin', dispin);
+    console.log('fichero', fichero);
+
+    console.log('data', data);
+    console.log('error', error);
+  }catch(err){console.log(err)}
+}
+
+export const SendRoomData = async (alt:number, anc:number, dispin: string, fichero: PieceType[] ) => {
+    const ficher= ficheroToBlob(fichero);
+    if( ! localStorage.getItem("creador")){
+      localStorage.setItem('creador', crypto.randomUUID());
+    }
+
+    const creatorId =localStorage.getItem("creador");
+    
+    const sc:number= localInt("salasCreadas") || 0;
+    console.log("Tienes ", sc, " salas creadas y el id con numero: ", creatorId );
+
+    if(sc<3){
+      const codSala = generateRoomId();
+      console.log('Iniciando Creacion de Sala y Juego, sc: ', sc)
+      const ventana = (data)=>{      
+        window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
+      }
+
+      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, ventana );
+      localStorage.setItem('salasCreadas', incremento(sc));
+      }
+
+    };
 
 
 //En esta version supones que el boardRows y boardCols llegan ya en binario

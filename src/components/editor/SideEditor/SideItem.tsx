@@ -16,7 +16,7 @@ interface SideItemProps {
 
 const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: SideItemProps) => {
   
-  const isPiece = 'captureMode' in gen;
+  const isPiece = 'captura_modo' in gen;
 
   return (
     <div
