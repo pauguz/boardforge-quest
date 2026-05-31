@@ -56,8 +56,9 @@ export function getUtilPieceTypes(bps: BoardPiece[], bts: PieceType[]){
   return   bts.filter(bt => tiposUnicos.includes(bt.code));
 }
 
-export function toDispin(pieces: BoardPiece[]): string {
-  const dispin = pieces.map(piece => ({
+export function toDispin(state: PlayState): string {
+
+  const dispin = state.initialPieces.map(piece => ({
     code:   piece.pieceTypeCode,
     player: piece.player,
     row:    piece.row,
