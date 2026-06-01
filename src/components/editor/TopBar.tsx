@@ -70,7 +70,7 @@ export function TopBar() {
             <Square className="w-4 h-4 mr-1" /> Detener
           </Button>
         ) : (
-          <Button size="sm" onClick={()=>{console.log(playState); startGame()}} disabled={boardPieces.length === 0}>
+          <Button size="sm" onClick={()=>{console.log(createInitialPlayState()); startGame()}} disabled={boardPieces.length === 0}>
             <Play className="w-4 h-4 mr-1" /> Correr
           </Button>
         )}

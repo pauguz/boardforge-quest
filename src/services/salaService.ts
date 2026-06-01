@@ -80,7 +80,7 @@ export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero
   }catch(err){console.log(err)}
 }
 
-export const SendRoomData = async (alt:number, anc:number, dispin: string, fichero: PieceType[] ) => {
+export const SendRoomData = async (alt:number, anc:number, dispin, fichero: PieceType[] ) => {
     const ficher= ficheroToBlob(fichero);
     if( ! localStorage.getItem("creador")){
       localStorage.setItem('creador', crypto.randomUUID());
