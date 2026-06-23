@@ -6,7 +6,7 @@ import {base64ToBlob, ficheroToBlob, generateRoomId, incremento, localInt} from 
 
 
     // 1. Definimos la función asíncrona DENTRO del useEffect
-export const obtenerDatos = async (roomId:string, Carga:Function, handleResult:Function, handleError:Function ) => {
+export const selectLudiSalaByCode = async (roomId:string, Carga:Function, handleResult:Function, handleError:Function ) => {
       console.log("intentando obtener datos de", roomId)
       try {
         Carga(true);

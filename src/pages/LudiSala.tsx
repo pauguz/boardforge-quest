@@ -5,14 +5,13 @@ import { PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, obtenerDatos, deleteRoom } from '../services/salaService.ts'
+import {verifyAuthorship, selectLudiSalaByCode, deleteRoom } from '../services/salaService.ts'
 import { incremento, localInt } from '@/utils/roomId.ts';
-
-
+import { mapSalaToPlayState } from '@/api/mappers.ts';
+import { gqlQuery } from '@/api/graphql.ts';
+import { QUERY_SALA } from '@/api/queries.ts';
 
 const LudiSala = () => {
-
-
 
   const [datos, setDatos] = useState<any|null>(); // Estado para guardar los resultados
   const [cargando, setCargando] = useState(true); // Estado para el indicador de carga
@@ -28,7 +27,6 @@ const LudiSala = () => {
 
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
-
     const channel = supabase.channel(`room:${roomId}`, {
       config: {
         presence: { key: localId }
@@ -57,24 +55,28 @@ const LudiSala = () => {
     });
     
     // 2. Ejecutamos la función
-    obtenerDatos(roomId, setCargando, setDatos ,setError);
+    selectLudiSalaByCode(roomId, setCargando, setDatos ,setError);
     verifyAuthorship(roomId, localId, setCreator, setError );
+    async function cargarSala() {
+      const data = await gqlQuery(QUERY_SALA, { salaId: 70 },  localId);
+      console.log("DATOS CRUDOS GRAPHQL:", data);      // verifica la estructura primero
+      const playState = mapSalaToPlayState(data);
+      console.log("PLAY STATE:", playState);
+    }
+    cargarSala();
   }, [roomId]); // 3. Se vuelve a ejecutar si la prop cambia
 
-  
-  
-
   if (!datos) return <div>Cargando...</div>;
+
   console.log('El ID local y el de la BD: ', localId, datos.creador_id)
-
-
-
   console.log("Es creador ", creator);
   const {alto:al, ancho:an}=datos;
   const alto= parseInt(al, 2);
   const ancho= parseInt(an, 2);
-  console.log('alto y ancho: ', al, an)
+
+  console.log('alto y ancho: ', al, an);
   const cellSize = Math.min(Math.floor(600 / Math.max(alto, ancho)), 64);
+ 
   const handleCellClick = (row: number, col: number) => {
     console.log("Casilla clickeada!: ", row, col)
     }
@@ -96,8 +98,6 @@ const LudiSala = () => {
                 const row = Math.floor(i / ancho);
                 const col = i % ancho;
                 const isDark = (row + col) % 2 === 1;
-
-      
                 return (
                   <div
                     key={`${row}-${col}`}
@@ -105,19 +105,13 @@ const LudiSala = () => {
                     className={cn(
                       "flex items-center justify-center cursor-pointer relative transition-colors",
                       isDark ? "bg-board-dark" : "bg-board-light",
-
-
                     )}
                     style={{ width: cellSize, height: cellSize }}
                   >
-
-
                   </div>
                 );
               })}
             </div>
-      
-
           </div>
     </div>
   )
