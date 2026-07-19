@@ -1,4 +1,4 @@
-const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const GQL_URL  = import.meta.env.VITE_SUPABASE_URL + '/graphql/v1';
 
 export async function gqlQuery(

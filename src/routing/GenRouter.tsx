@@ -14,7 +14,7 @@ const GenRouter = () => {
       <Route path="/" element={<Index />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/ayuda" element={<Ayuda />}/>
-      <Route path="/sala/:roomId" element={<LudiSala />}/>
+      <Route path="/sala/:roomCode" element={<LudiSala />}/>
       
       <Route path="*" element={<NotFound />} />
     </Routes>

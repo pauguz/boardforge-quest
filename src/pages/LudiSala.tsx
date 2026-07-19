@@ -9,7 +9,7 @@ import {verifyAuthorship, selectLudiSalaByCode, deleteRoom } from '../services/s
 import { incremento, localInt } from '@/utils/roomId.ts';
 import { mapSalaToPlayState } from '@/api/mappers.ts';
 import { gqlQuery } from '@/api/graphql.ts';
-import { QUERY_SALA } from '@/api/queries.ts';
+import { QUERY_LUDISALAS, QUERY_SALA } from '@/api/queries.ts';
 
 const LudiSala = () => {
 
@@ -20,14 +20,14 @@ const LudiSala = () => {
   const [creator, setCreator] = useState<boolean>(false);
   const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
 
-  const { roomId } = useParams();
+  const { roomCode } = useParams();
   if (! localStorage.getItem('creador')){localStorage.setItem('creador', crypto.randomUUID())}
   const localId= localStorage.getItem('creador');
   
 
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
-    const channel = supabase.channel(`room:${roomId}`, {
+    const channel = supabase.channel(`room:${roomCode}`, {
       config: {
         presence: { key: localId }
       }
@@ -55,16 +55,21 @@ const LudiSala = () => {
     });
     
     // 2. Ejecutamos la función
-    selectLudiSalaByCode(roomId, setCargando, setDatos ,setError);
-    verifyAuthorship(roomId, localId, setCreator, setError );
+    selectLudiSalaByCode(roomCode, setCargando, setDatos ,setError);
+    verifyAuthorship(roomCode, localId, setCreator, setError );
     async function cargarSala() {
-      const data = await gqlQuery(QUERY_SALA, { salaId: 70 },  localId);
+      //console.log("URL:", import.meta.env.VITE_SUPABASE_URL);
+      //console.log("KEY:", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+      const data = await gqlQuery(QUERY_LUDISALAS);
+      const salas = data.ludisalaCollection.edges.map(e => e.node);   
+      console.log("Salas", salas);   
       console.log("DATOS CRUDOS GRAPHQL:", data);      // verifica la estructura primero
       const playState = mapSalaToPlayState(data);
       console.log("PLAY STATE:", playState);
+
     }
     cargarSala();
-  }, [roomId]); // 3. Se vuelve a ejecutar si la prop cambia
+  }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
 
   if (!datos) return <div>Cargando...</div>;
 
