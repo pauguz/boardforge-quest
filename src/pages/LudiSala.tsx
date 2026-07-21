@@ -5,11 +5,8 @@ import { PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, selectLudiSalaByCode, deleteRoom } from '../services/salaService.ts'
+import {verifyAuthorship, selectLudiSalaByCode, deleteRoom, selectLudiSalaAndStateByCode } from '../services/salaService.ts'
 import { incremento, localInt } from '@/utils/roomCode.ts';
-import { mapSalaToPlayState } from '@/api/mappers.ts';
-import { gqlQuery } from '@/api/graphql.ts';
-import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries.ts';
 
 const LudiSala = () => {
 
@@ -24,7 +21,6 @@ const LudiSala = () => {
   if (! localStorage.getItem('creador')){localStorage.setItem('creador', crypto.randomUUID())}
   const localId= localStorage.getItem('creador');
   
-
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
     const channel = supabase.channel(`room:${roomCode}`, {
@@ -56,19 +52,7 @@ const LudiSala = () => {
     
     // 2. Ejecutamos la función
     verifyAuthorship(roomCode, localId, setCreator, setError );
-    async function cargarSala() {
-      const data = await gqlQuery(QUERY_LUDISALA_POR_CODE, { codigo: roomCode });
-      const node = data.ludisalaCollection.edges[0]?.node;
-      if (!node) return;
-    
-      setDatos(node);  
-    
-      const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
-      const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
-      const playState = mapSalaToPlayState(node, piezas);
-      setFase(playState);
-    }
-    cargarSala();
+    selectLudiSalaAndStateByCode(roomCode, setCargando, setDatos, setFase, setError);
   }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
 
   if (!datos) return <div>Cargando...</div>;

@@ -7,7 +7,7 @@ import { gqlQuery } from '@/api/graphql';
 import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
 import { mapSalaToPlayState } from '@/api/mappers';
 
-export const nodeLudiSalaByCode = async (roomCode:string, Espera:Function, handleResult1:Function, handleResult2:Function, handleError:Function ) => {
+export const selectLudiSalaAndStateByCode = async (roomCode:string, Espera:Function, handleResult1:Function, handleResult2:Function, handleError:Function ) => {
   console.log("intentando obtener datos de", roomCode)
       try {
         const data = await gqlQuery(QUERY_LUDISALA_POR_CODE, { codigo: roomCode });
