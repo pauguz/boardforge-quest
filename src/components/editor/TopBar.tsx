@@ -7,7 +7,7 @@ import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
 import { useNavigate } from "react-router-dom";
-import { generateRoomId, toBinaryString, incremento, localInt, ficheroToBlob } from "@/utils/roomId";
+import { generateRoomCode, toBinaryString, incremento, localInt, ficheroToBlob } from "@/utils/roomCode";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { supabase } from '../../utils/supabaseClient';
 import { createRoomwithGame, createRoomwithGameIL, SendRoomData } from "../../services/salaService";
@@ -20,7 +20,7 @@ export function TopBar() {
     boardRows, boardCols, setBoardRows, setBoardCols,
     currentPlayer, setCurrentPlayer,
     isPlaying, startGame, stopGame, playState, createInitialPlayState,
-    boardPieces, victoryConditions, getBoardPieceTypeCodes
+    boardPieces, victoryConditions, getBoardPieceTypes
   } = useGameEditor();
 
   const {pieceTypes, status, setStatus} = useGeneralEditor();
@@ -43,7 +43,6 @@ export function TopBar() {
   return (
     <>
       <div className="flex items-center gap-3 px-4 py-2 border-b border-border bg-card shrink-0 flex-wrap" >
-
         <div className="flex items-center gap-1.5 text-sm">
           <span className="text-muted-foreground">Filas</span>
           <Input type="number" min={2} max={20} value={boardRows}
@@ -86,13 +85,12 @@ export function TopBar() {
                        const an=toBinaryString(boardCols) ;
                        const initialState = playState ?? createInitialPlayState();
                        console.log(initialState, boardRows, boardCols);
-                       SendRoomData(al, an, toDispin(initialState) ,getBoardPieceTypeCodes() );}
+                       const bpts= getBoardPieceTypes();
+                       SendRoomData(al, an, toDispin(initialState, bpts) ,bpts );}
                   }
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir
         </Button>
-
-
 
         {isPlaying && playState && (
           <div className="ml-auto text-sm font-medium">

@@ -6,10 +6,10 @@ import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
 import {verifyAuthorship, selectLudiSalaByCode, deleteRoom } from '../services/salaService.ts'
-import { incremento, localInt } from '@/utils/roomId.ts';
+import { incremento, localInt } from '@/utils/roomCode.ts';
 import { mapSalaToPlayState } from '@/api/mappers.ts';
 import { gqlQuery } from '@/api/graphql.ts';
-import { QUERY_LUDISALAS, QUERY_SALA } from '@/api/queries.ts';
+import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries.ts';
 
 const LudiSala = () => {
 
@@ -55,18 +55,18 @@ const LudiSala = () => {
     });
     
     // 2. Ejecutamos la función
-    selectLudiSalaByCode(roomCode, setCargando, setDatos ,setError);
     verifyAuthorship(roomCode, localId, setCreator, setError );
     async function cargarSala() {
-      //console.log("URL:", import.meta.env.VITE_SUPABASE_URL);
-      //console.log("KEY:", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
-      const data = await gqlQuery(QUERY_LUDISALAS);
-      const salas = data.ludisalaCollection.edges.map(e => e.node);   
-      console.log("Salas", salas);   
-      console.log("DATOS CRUDOS GRAPHQL:", data);      // verifica la estructura primero
-      const playState = mapSalaToPlayState(data);
-      console.log("PLAY STATE:", playState);
-
+      const data = await gqlQuery(QUERY_LUDISALA_POR_CODE, { codigo: roomCode });
+      const node = data.ludisalaCollection.edges[0]?.node;
+      if (!node) return;
+    
+      setDatos(node);  
+    
+      const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
+      const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
+      const playState = mapSalaToPlayState(node, piezas);
+      setFase(playState);
     }
     cargarSala();
   }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia

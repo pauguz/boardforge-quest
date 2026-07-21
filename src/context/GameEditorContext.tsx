@@ -9,7 +9,7 @@ interface GameEditorContextType {
   boardCols: number;
   setBoardRows: (n: number) => void;
   setBoardCols: (n: number) => void;
-  getBoardPieceTypeCodes ,
+  getBoardPieceTypes ,
   boardPieces: BoardPiece[];
   setBoardPieces: React.Dispatch<React.SetStateAction<BoardPiece[]>>;
   currentPlayer: 1 | 2;
@@ -146,7 +146,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
-      isPlaying, playState, createInitialPlayState, startGame, stopGame, handlePlayClick, getBoardPieceTypeCodes: getBoardPieceTypes
+      isPlaying, playState, createInitialPlayState, startGame, stopGame, handlePlayClick, getBoardPieceTypes: getBoardPieceTypes
     }}>
       {children}
     </Ctx.Provider>
