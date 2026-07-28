@@ -37,7 +37,7 @@ export type VictoryMode = 'arrival' | 'capture';
 
 export interface VictoryCondition {
   mode: VictoryMode;
-  pieceTypeCode: string;
+  pieceTypeIndex: number;
   targetCells?: Position[];
 }
 

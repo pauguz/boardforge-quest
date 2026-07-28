@@ -17,21 +17,17 @@ interface DispinEntry {
 }
 
 export function mapSalaToPlayState(node: any, piezas: any[]): PlayState {
-  const dispin: Array<{code: string, player: 1|2, row: number, col: number}> 
+  const dispin: Array<{idx: number, player: 1|2, row: number, col: number}> 
     = typeof node.dispin === 'string' 
       ? JSON.parse(node.dispin) 
       : (node.dispin ?? []);
 
-  const pieces: BoardPiece[] = dispin.map(entry => {
-    const tipo = piezas.find(p => p.codigo === entry.code);
-    return {
-      pieceTypeCode: entry.code,
-      simbolo:       tipo?.simbolo ?? '?',
-      player:        entry.player,
-      row:           entry.row,
-      col:           entry.col,
-    };
-  });
+  const pieces: BoardPiece[] = dispin.map(entry => ({
+    pieceTypeIndex: entry.idx,
+    player:         entry.player,
+    row:            entry.row,
+    col:            entry.col,
+  }));
 
   return {
     pieces,
