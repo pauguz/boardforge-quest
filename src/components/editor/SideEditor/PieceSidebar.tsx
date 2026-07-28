@@ -12,19 +12,14 @@ import SideItem from "./SideItem";
 
 export function PieceSidebar() {
   const {
-    pieceTypes, addPieceType, removePieceType,
+    pieceTypes, addPieceType, removePieceType,selectedPieceTypeIndex, setSelectedPieceTypeIndex
   } = useGeneralEditor();
-
   const {isPlaying,}= useGameEditor();
-
-
-
-  const {selectedPieceTypeCode, setSelectedPieceTypeCode}= useGeneralEditor();
 
   const [showNameDialog, setShowNameDialog] = useState(false);
   const [pendingImage, setPendingImage] = useState<string | null>(null);
-  const [paramsId, setParamsId] = useState<string | null>(null);
-  const [testId, setTestId] = useState<string | null>(null);
+  const [paramsId, setParamsId] = useState<number | null>(null);
+  const [testId, setTestId] = useState<number | null>(null);
   const [pendingName, setPendingName] = useState<string|null>(null);
   const [pendingFile, setPendingFile] = useState<File|null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -73,14 +68,14 @@ export function PieceSidebar() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {pieceTypes.map(pt => (
-          <ContextMenu key={pt.code}>
+        {pieceTypes.map((pt, ind) => (
+          <ContextMenu key={ind}>
             <ContextMenuTrigger>
-              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeCode} selection={setSelectedPieceTypeCode} /> 
+              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeIndex} selection={setSelectedPieceTypeIndex} /> 
             </ContextMenuTrigger>
             <ContextMenuContent>
-              <ContextMenuItem onClick={() => setParamsId(pt.code)}>Parámetros</ContextMenuItem>
-              <ContextMenuItem onClick={() => setTestId(pt.code)}>Pruebas</ContextMenuItem>
+              <ContextMenuItem onClick={() => {console.log(ind) ;setParamsId(ind)}}>Parámetros</ContextMenuItem>
+              <ContextMenuItem onClick={() => setTestId(ind)}>Pruebas</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
         ))  }
@@ -91,11 +86,11 @@ export function PieceSidebar() {
         )}
       </div>
 
-      {selectedPieceTypeCode && (
+      {selectedPieceTypeIndex && (
         <div className="p-2 border-t border-border text-xs text-muted-foreground text-center">
-          Seleccionada: {pieceTypes.find(pt => pt.code === selectedPieceTypeCode)?.name}
+          Seleccionada: {pieceTypes[selectedPieceTypeIndex]?.name}
           <Button variant="link" size="sm" className="text-xs ml-1"
-            onClick={() => {setSelectedPieceTypeCode(null), console.log(pieceTypes)}}>
+            onClick={() => {setSelectedPieceTypeIndex(null), console.log(pieceTypes)}}>
             Deseleccionar
           </Button>
         </div>
@@ -108,8 +103,16 @@ export function PieceSidebar() {
             onConfirm={handleCreate}
           />
 
-      <PieceParametersDialog pieceTypeCode={paramsId} open={!!paramsId} onOpenChange={v => !v && setParamsId(null)} />
-      <PieceTestDialog pieceTypeCode={testId} open={!!testId} onOpenChange={v => !v && setTestId(null)} />
+      <PieceParametersDialog 
+        pieceTypeIndex={paramsId} 
+        open={paramsId !== null} 
+        onOpenChange={v => !v && setParamsId(null)} 
+      />
+      <PieceTestDialog 
+        pieceTypeIndex={testId} 
+        open={testId !== null} 
+        onOpenChange={v => !v && setTestId(null)} 
+      />
     </div>
   );
 }

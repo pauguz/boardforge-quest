@@ -6,14 +6,9 @@ import { VictoryConditionDialog } from "./SideEditor/VictoryConditionDialog";
 import { exportGameAsHTML } from "@/utils/gameExport";
 import { Play, Square, Download, Trophy, Share2 } from "lucide-react";
 import { PlayerSwitch } from "../ui/mini/player-switch";
-import { useNavigate } from "react-router-dom";
-import { generateRoomCode, toBinaryString, incremento, localInt, ficheroToBlob } from "@/utils/roomCode";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
-import { supabase } from '../../utils/supabaseClient';
-import { createRoomwithGame, createRoomwithGameIL, SendRoomData } from "../../services/salaService";
-import { dummy } from "@/utils/dummy";
-import { stringify } from "querystring";
-import { PieceType, toDispin } from "@/types/game";
+import {  SendRoomData } from "../../services/salaService";
+import { toDispin,  toBinaryString } from "@/utils/transformations";
 
 export function TopBar() {
   const {

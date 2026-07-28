@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { PieceType, BoardPiece, VictoryCondition, Position, getUtilPieceTypes } from '@/types/game';
+import { PieceType, BoardPiece, VictoryCondition, Position } from '@/types/game';
+import { getUtilPieceTypes } from '@/utils/transformations';
 import { getValidMoves, getEuropeanCaptures, checkVictory } from '@/utils/movement';
 import { useGeneralEditor } from './GeneralEditorContext';
 import { PlayState } from '@/types/game';
@@ -48,7 +49,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
   const [playState, setPlayState] = useState<PlayState | null>(null);
 
 
-  const {pieceTypes, selectedPieceTypeCode}=useGeneralEditor();
+  const {pieceTypes, selectedPieceTypeIndex}=useGeneralEditor();
 
   const getBoardPieceTypes = useCallback(
     ()=>{return  getUtilPieceTypes(boardPieces, pieceTypes);}, 

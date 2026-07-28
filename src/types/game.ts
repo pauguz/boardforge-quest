@@ -22,7 +22,6 @@ export interface PieceType {
 }
 
 export interface BoardPiece {
-  pieceTypeCode: string;
   player: 1 | 2;
   row: number;
   col: number;
@@ -48,20 +47,5 @@ export interface PlayState {
   validMoves: Position[];
   winner: number | null;
   initialPieces: BoardPiece[];
-}
-
-
-export function getUtilPieceTypes(bps: BoardPiece[], bts: PieceType[]){
-  const tiposUnicos = [...new Set(bps.map(c => c.pieceTypeCode))];
-  return   bts.filter(bt => tiposUnicos.includes(bt.code));
-}
-
-export function toDispin(state: PlayState, pieces: PieceType[]) {
-  return state.initialPieces.map(piece => ({
-    idx:    pieces.findIndex(p => p.code === piece.pieceTypeCode),
-    player: piece.player,
-    row:    piece.row,
-    col:    piece.col,
-  }));
 }
 

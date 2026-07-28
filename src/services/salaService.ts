@@ -2,7 +2,8 @@ import { AlertOctagon } from 'lucide-react';
 import {supabase} from '../utils/supabaseClient';
 
 import { PieceType } from '@/types/game';
-import {base64ToBlob, ficheroToBlob, generateRoomCode, incremento, localInt} from '../utils/roomCode';
+import { generateRoomCode, incremento, localInt} from '../utils/roomCode';
+import { base64ToBlob, ficheroToBlob, } from '@/utils/transformations';
 import { gqlQuery } from '@/api/graphql';
 import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
 import { mapSalaToPlayState } from '@/api/mappers';

@@ -9,9 +9,9 @@ import { Tooltip } from '@radix-ui/react-tooltip';
 interface SideItemProps {
   gen: PieceType | menuType;
   bloqueo: boolean;
-  selection: (id: string) => void;
+  selection: (id: string|number) => void;
   selectedID: any;
-  remotion?: (id: string) => void | null;
+  remotion?: (id: string|number) => void | null; //revisa la busqueda de esto
 }
 
 const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: SideItemProps) => {

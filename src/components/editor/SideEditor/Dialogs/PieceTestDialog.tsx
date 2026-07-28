@@ -7,15 +7,15 @@ import { cn } from "@/lib/utils";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
-  pieceTypeCode: string | null;
+  pieceTypeIndex: number | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
 
-export function PieceTestDialog({ pieceTypeCode, open, onOpenChange }: Props) {
+export function PieceTestDialog({ pieceTypeIndex: pieceTypeIndex, open, onOpenChange }: Props) {
   const { boardRows, boardCols } = useGameEditor();
   const { pieceTypes,} = useGeneralEditor();
-  const pieceType = pieceTypes.find(pt => pt.code === pieceTypeCode);
+  const pieceType = pieceTypes[pieceTypeIndex];
   const [testPos, setTestPos] = useState<Position>({ row: Math.floor(boardRows / 2), col: Math.floor(boardCols / 2) });
   const [showMoves, setShowMoves] = useState(false);
 

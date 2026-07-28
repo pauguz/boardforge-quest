@@ -12,14 +12,14 @@ import { findDirections } from "@/utils/movement";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 interface Props {
-  pieceTypeCode: string | null;
+  pieceTypeIndex: number | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
 
-export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Props) {
+export function PieceParametersDialog({ pieceTypeIndex: pieceTypeIndex, open, onOpenChange }: Props) {
   const { pieceTypes, updatePieceType } = useGeneralEditor();
-  const pieceType = pieceTypes.find(pt => pt.code === pieceTypeCode);
+  const pieceType = pieceTypes[pieceTypeIndex];
 
   const [dx, setDx] = useState(0);
   const [dy, setDy] = useState(0);
@@ -36,17 +36,17 @@ export function PieceParametersDialog({ pieceTypeCode, open, onOpenChange }: Pro
       ...(moveType === 'range' ? { range } : {}), rotate,
     };
     if ( findDirections(pieceType, rule.direction) ) return;
-    updatePieceType(pieceType.code, { moves: [...pieceType.moves, rule] });
+    updatePieceType(pieceTypeIndex, { moves: [...pieceType.moves, rule] });
   };
 
   const removeMovement = (index: number) => {
-    updatePieceType(pieceType.code, {
+    updatePieceType(pieceTypeIndex, {
       moves: pieceType.moves.filter((_, i) => i !== index),
     });
   };
 
   const setCaptureMode = (mode: CaptureMode) => {
-    updatePieceType(pieceType.code, { captura_modo: mode });
+    updatePieceType(pieceTypeIndex, { captura_modo: mode });
   };
 
   const typeLabel = (t: string, r?: number) =>
