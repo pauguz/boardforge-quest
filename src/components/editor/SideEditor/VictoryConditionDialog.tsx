@@ -37,7 +37,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
   };
 
   const handleAdd = () => {
-    if (!pieceTypeIndex) return;
+    if (pieceTypeIndex === null) return;
     const vc: VictoryCondition = {
       mode, pieceTypeIndex: pieceTypeIndex,
       ...(mode === 'arrival' ? { targetCells: [...targetCells] } : {}),
@@ -63,7 +63,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
               <div key={i} className="flex items-center justify-between p-2 bg-secondary rounded text-sm">
                 <span>
                   {vc.mode === 'arrival' ? '🏁 Llegada' : '⚔️ Captura'}:{' '}
-                  {pieceTypes.find[vc.pieceTypeIndex]?.name || '?'}
+                  {pieceTypes[vc.pieceTypeIndex]?.name || '?'}
                   {vc.targetCells && ` (${vc.targetCells.length} casillas)`}
                 </span>
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(i, player-1) }}>
@@ -86,13 +86,16 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
               onClick={() => setMode('capture')}>Extinción</Button>
           </div>
 
-          <Select value={pieceTypeIndex} onValueChange={setPieceTypeIndex}>
+          <Select
+            value={pieceTypeIndex !== null ? String(pieceTypeIndex) : undefined}
+            onValueChange={v => setPieceTypeIndex(v === "" ? null : Number(v))}
+          >
             <SelectTrigger className="h-8">
               <SelectValue placeholder="Seleccionar tipo de ficha" />
             </SelectTrigger>
             <SelectContent>
               {pieceTypes.map((pt, indx) => (
-                <SelectItem key={indx} value={pt.code}>{pt.name}</SelectItem>
+                <SelectItem key={indx} value={String(indx)}>{pt.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -126,7 +129,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
           )}
 
           <Button onClick={handleAdd} size="sm" className="w-full"
-            disabled={!pieceTypeIndex || (mode === 'arrival' && targetCells.length === 0)}>
+            disabled={pieceTypeIndex === null || (mode === 'arrival' && targetCells.length === 0)}>
             Agregar condición
           </Button>
 
