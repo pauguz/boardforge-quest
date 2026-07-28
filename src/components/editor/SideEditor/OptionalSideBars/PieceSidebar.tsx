@@ -3,12 +3,13 @@ import { useGameEditor } from "@/context/GameEditorContext";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
 import { Button } from "@/components/ui/button";
-import { CreatePieceDialog } from "./Dialogs/CreatePieceDialog";
+import { CreatePieceDialog } from "../Dialogs/CreatePieceDialog";
 import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} from "@/components/ui/context-menu";
-import { PieceParametersDialog } from "./Dialogs/PieceParametersDialog";
-import { PieceTestDialog } from "./Dialogs/PieceTestDialog";
+import { PieceParametersDialog } from "../Dialogs/PieceParametersDialog";
+import { PieceTestDialog } from "../Dialogs/PieceTestDialog";
 import { Plus } from "lucide-react";
 import SideItem from "./SideItem";
+import { cn } from "@/lib/utils";
 
 export function PieceSidebar() {
   const {
@@ -71,7 +72,18 @@ export function PieceSidebar() {
         {pieceTypes.map((pt, ind) => (
           <ContextMenu key={ind}>
             <ContextMenuTrigger>
-              <SideItem gen={pt} bloqueo={isPlaying} remotion={removePieceType} selectedID={selectedPieceTypeIndex} selection={setSelectedPieceTypeIndex} /> 
+              <div 
+                  className={cn(
+                  "rounded-md",
+                  selectedPieceTypeIndex === ind && "bg-accent ring-1 ring-primary"
+                        )}>
+                      <SideItem 
+                        gen={pt} 
+                        bloqueo={isPlaying} 
+                        remotion={()=> { removePieceType(ind)}}  
+                        selection={()=>setSelectedPieceTypeIndex(ind)} 
+                        /> 
+              </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
               <ContextMenuItem onClick={() => {console.log(ind) ;setParamsId(ind)}}>Parámetros</ContextMenuItem>
@@ -86,7 +98,7 @@ export function PieceSidebar() {
         )}
       </div>
 
-      {selectedPieceTypeIndex && (
+      {selectedPieceTypeIndex!=null && (
         <div className="p-2 border-t border-border text-xs text-muted-foreground text-center">
           Seleccionada: {pieceTypes[selectedPieceTypeIndex]?.name}
           <Button variant="link" size="sm" className="text-xs ml-1"

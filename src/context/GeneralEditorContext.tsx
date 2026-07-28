@@ -13,8 +13,8 @@ interface GeneralEditorContextType {
   removePieceType: (index: number) => void;
   selectedPieceTypeIndex: number | null;
   setSelectedPieceTypeIndex: (index: number | null) => void;
-  selectedMenuId: string | null;
-  setSelectedMenuId: (id: string | null) => void;
+  selectedMenuIndex: number | null;
+  setSelectedMenuIndex: (id: number | null) => void;
   lastRemoval: { payload: any; id: number } | null;
 }
 
@@ -36,7 +36,7 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
     const [status, setStatus] = useState<1|2|3>(1);
     const [lastRemoval, setLastRemoval] = useState<{ payload: any; id: number } | null>(null);
     const [selectedPieceTypeIndex, setSelectedPieceTypeIndex] = useState<number | null>(null);
-    const [selectedMenuId, setSelectedMenuId] = useState<string | null>('1');
+    const [selectedMenuIndex, setSelectedMenuIndex] = useState<number | null>(0);
     const [pieceTypes, setPieceTypes] = useState<PieceType[]>([]);
     const [selectedTab, setSelectedTab] = useState<number>(0);
 
@@ -57,6 +57,7 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
     
     const removePieceType = useCallback((index: number) => {
+      console.log("Removing piece type at index:", index);
       setPieceTypes(prev => prev.filter((_, i) => i !== index));
       setSelectedPieceTypeIndex(prev => {
         if (prev === null || prev < index) return prev;   // no afectado
@@ -69,7 +70,7 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
 
   
   return (
-    <Ctx.Provider value={{selectedMenuId, setSelectedMenuId, selectedPieceTypeIndex , setSelectedPieceTypeIndex,
+    <Ctx.Provider value={{selectedMenuIndex: selectedMenuIndex, setSelectedMenuIndex: setSelectedMenuIndex, selectedPieceTypeIndex , setSelectedPieceTypeIndex,
       updatePieceType, addPieceType, removePieceType, pieceTypes, status, setStatus,
       selectedTab, setSelectedTab, lastRemoval
      }}>

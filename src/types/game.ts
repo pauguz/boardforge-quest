@@ -22,6 +22,7 @@ export interface PieceType {
 }
 
 export interface BoardPiece {
+  pieceTypeIndex: number;
   player: 1 | 2;
   row: number;
   col: number;

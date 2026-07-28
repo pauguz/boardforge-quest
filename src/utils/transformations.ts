@@ -1,25 +1,23 @@
 import { BoardPiece, PieceType, PlayState } from "../types/game";
 
 
-export function getUtilPieceTypes(bps: BoardPiece[], bts: PieceType[]){
-    const tiposUnicos = [...new Set(bps.map(c => c.pieceTypeCode))];
-    return   bts.filter(bt => tiposUnicos.includes(bt.code));
-  }
-  
-export function toDispin(state: PlayState, pieces: PieceType[]) {
-    return state.initialPieces.map(piece => ({
-      idx:    pieces.findIndex(p => p.code === piece.pieceTypeCode),
-      player: piece.player,
-      row:    piece.row,
-      col:    piece.col,
-    }));
-  }
-  
+export function getUtilPieceTypes(bps: BoardPiece[], bts: PieceType[]): PieceType[] {
+  const indicesUnicos = [...new Set(bps.map(p => p.pieceTypeIndex))];
+  return bts.filter((_, i) => indicesUnicos.includes(i));
+}
+
+export function toDispin(state: PlayState) {  // ya no necesita pieces
+  return state.initialPieces.map(piece => ({
+    idx:    piece.pieceTypeIndex,
+    player: piece.player,
+    row:    piece.row,
+    col:    piece.col,
+  }));
+}
 
 export function toBinaryString (num, bits = 5) {
     return num.toString(2).padStart(bits, '0');
   };
-
 
 export  function base64ToBlob(base64String) {
     // Separar el encabezado ("data:image/png;base64,") de los datos puros

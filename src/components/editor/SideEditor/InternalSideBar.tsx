@@ -1,18 +1,17 @@
 import { useGeneralEditor } from '@/context/GeneralEditorContext';
-import { PieceSidebar } from './PieceSidebar';
+import { PieceSidebar } from './OptionalSideBars/PieceSidebar';
 import BoxSideBar from './BoxSideBar';
-import MoneySideBar from './MoneySideBar';
+import MoneySideBar from './OptionalSideBars/MoneySideBar';
 
-const BARS = {
-  '1': PieceSidebar,
-  '2': BoxSideBar,
-  '3': BoxSideBar,
-  '4': MoneySideBar
-};
+const BARS = [
+   PieceSidebar,
+   BoxSideBar,
+   BoxSideBar,
+   MoneySideBar]
 
 const InternalSideBar = () => {
     const {
-      selectedMenuId, setSelectedMenuId
+      selectedMenuIndex: selectedMenuId, setSelectedMenuIndex: setSelectedMenuId
     } = useGeneralEditor();
     const Render= BARS[selectedMenuId] || PieceSidebar;
 

@@ -21,7 +21,7 @@ export function PieceTestDialog({ pieceTypeIndex: pieceTypeIndex, open, onOpenCh
 
   const validMoves = useMemo(() => {
     if (!pieceType || !showMoves) return [];
-    const testPiece: BoardPiece = { pieceTypeCode: pieceType.code, player: 1, row: testPos.row, col: testPos.col };
+    const testPiece: BoardPiece = { pieceTypeIndex: pieceTypeIndex, player: 1, row: testPos.row, col: testPos.col };
     const { moves } = getValidMoves(testPiece, pieceType, [testPiece], boardRows, boardCols);
     return moves;
   }, [pieceType, testPos, showMoves, boardRows, boardCols]);

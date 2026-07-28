@@ -107,7 +107,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
     if (selected && validMoves.some(m => m.row === row && m.col === col)) {
       const movingPiece = pieces.find(p => p.row === selected.row && p.col === selected.col);
       if (!movingPiece) return;
-      const pt = pieceTypes.find(t => t.code === movingPiece.pieceTypeCode);
+      const pt = pieceTypes[movingPiece.pieceTypeIndex];
       if (!pt) return;
 
       let newPieces = pieces.filter(p => !(p.row === selected.row && p.col === selected.col));
@@ -132,7 +132,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
     //Seleccion
     const clickedPiece = pieces.find(p => p.row === row && p.col === col && p.player === turn);
     if (clickedPiece) {
-      const pt = pieceTypes.find(t => t.code === clickedPiece.pieceTypeCode);
+      const pt = pieceTypes[clickedPiece.pieceTypeIndex];
       if (!pt) return;
       const { moves } = getValidMoves(clickedPiece, pt, pieces, boardRows, boardCols);
       setPlayState({ ...playState, selected: { row, col }, validMoves: moves });

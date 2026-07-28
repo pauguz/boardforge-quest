@@ -14,7 +14,7 @@ export function exportGameAsHTML(
       movements: pt.moves, captureMode: pt.captura_modo,
     })),
     pieces: pieces.map(p => ({
-      pieceTypeId: p.pieceTypeCode, player: p.player, row: p.row, col: p.col,
+      pieceTypeId: p.pieceTypeIndex, player: p.player, row: p.row, col: p.col,
     })),
     victoryConditions,
   });

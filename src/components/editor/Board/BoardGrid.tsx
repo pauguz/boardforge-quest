@@ -8,7 +8,7 @@ export function BoardGrid() {
     currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
     
   } = useGameEditor();
-  const {selectedPieceTypeCode, pieceTypes, addPieceType, }=useGeneralEditor();
+  const {selectedPieceTypeIndex, pieceTypes, addPieceType, }=useGeneralEditor();
     
   const handleCellClick = (row: number, col: number) => {
     if (isPlaying) {
@@ -19,10 +19,9 @@ export function BoardGrid() {
     if (existing) {
       setBoardPieces(prev => prev.filter(p => !(p.row === row && p.col === col)));
     } 
-    else if (selectedPieceTypeCode) {
-      
+    else if (selectedPieceTypeIndex !== null) {
       setBoardPieces(prev => [...prev, {
-        pieceTypeCode: selectedPieceTypeCode, player: currentPlayer, row, col,
+        pieceTypeIndex: selectedPieceTypeIndex, player: currentPlayer, row, col,
       }]);  
     }
 
@@ -51,7 +50,7 @@ export function BoardGrid() {
           const col = i % boardCols;
           const isDark = (row + col) % 2 === 1;
           const piece = pieces.find(p => p.row === row && p.col === col);
-          const pt = piece ? pieceTypes.find(t => t.code === piece.pieceTypeCode) : null;
+          const pt = piece ? pieceTypes[piece.pieceTypeIndex] : null;
           const isValidMove = validMoves.some(m => m.row === row && m.col === col);
           const isSelected = selected?.row === row && selected?.col === col;
           const isTarget = targetCells.some(t => t.row === row && t.col === col);

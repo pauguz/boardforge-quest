@@ -1,6 +1,6 @@
 import { PieceType } from '@/types/game';
 import React from 'react';
-import { Button } from '../../ui/button';
+import { Button } from '../../../ui/button';
 import { cn } from '@/lib/utils';
 import { Trash2 } from "lucide-react";
 import { menuType } from '@/types/menu';
@@ -9,22 +9,17 @@ import { Tooltip } from '@radix-ui/react-tooltip';
 interface SideItemProps {
   gen: PieceType | menuType;
   bloqueo: boolean;
-  selection: (id: string|number) => void;
-  selectedID: any;
-  remotion?: (id: string|number) => void | null; //revisa la busqueda de esto
+  selection: () => void; //revisa la seleccion de esto
+  remotion?: () => void | null; //revisa la busqueda de esto
 }
 
-const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: SideItemProps) => {
-  
+const SideItem = ({ gen, bloqueo, selection, remotion = null }: SideItemProps) => {
   const isPiece = 'captura_modo' in gen;
 
   return (
     <div
-      onClick={() => !bloqueo && selection(gen.code)}
-      className={cn(
-        "flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors",
-        selectedID === gen.code && "bg-accent ring-1 ring-primary"
-      )}
+      onClick={() => !bloqueo  && selection() }
+      className='flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors'
     >
       {isPiece ? (
         <>        
@@ -34,7 +29,6 @@ const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: Side
 
       ) : (
         (() => { const Icon = gen.imageUrl; 
-
           return  <div title={gen.name}>          
             <Icon className="w-8 h-8 text-muted-foreground"  />
             </div>
@@ -47,7 +41,7 @@ const SideItem = ({ gen, bloqueo, selection, selectedID, remotion = null }: Side
           variant="ghost" 
           size="icon" 
           className="h-6 w-6 opacity-50 hover:opacity-100"
-          onClick={e => { e.stopPropagation(); remotion(gen.code); }}
+          onClick={e => { e.stopPropagation(); remotion(); }}
         >
           <Trash2 className="w-3 h-3" />
         </Button>
