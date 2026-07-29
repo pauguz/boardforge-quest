@@ -44,7 +44,6 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
     };
     addVictoryCondition(vc, player-1);
     setTargetCells([]);
-    setPieceTypeIndex(null);
   };
 
   const cellSize = Math.min(Math.floor(320 / Math.max(boardRows, boardCols)), 28);
@@ -68,7 +67,7 @@ export function VictoryConditionDialog({ open, onOpenChange, plyr }: Props) {
                 </span>
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {console.log("RMCInit"); removeVictoryCondition(i, player-1) }}>
                   <X className="w-3 h-3" />
-                </Button>
+              </Button>
               </div>
             ))}
           </div>

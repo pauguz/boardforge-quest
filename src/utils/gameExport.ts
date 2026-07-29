@@ -9,8 +9,8 @@ export function exportGameAsHTML(
 ): string {
   const gameData = JSON.stringify({
     boardRows, boardCols,
-    pieceTypes: pieceTypes.map(pt => ({
-      id: pt.code, name: pt.name, imageUrl: pt.imageUrl,
+    pieceTypes: pieceTypes.map( (pt, ind) => ({
+      id: ind, name: pt.name, imageUrl: pt.imageUrl,
       movements: pt.moves, captureMode: pt.captura_modo,
     })),
     pieces: pieces.map(p => ({
