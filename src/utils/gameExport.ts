@@ -83,15 +83,25 @@ if(adj&&adj.player!==pl){const opp=S.pieces.find(p=>p.row===ar+d.dy&&p.col===ac+
 if(opp&&opp.player===pl)c.push({row:ar,col:ac})}}return c;
 }
 function chkWin(turn){
+  console.log("chkWin para turno:", turn);
+  console.log("VCs:", G.victoryConditions[turn-1]);
+  console.log("Piezas:", S.pieces);
 for(const vc of G.victoryConditions[turn-1]){
+    console.log("Evaluando vc:", vc);
 if(vc.mode==='arrival'&&vc.targetCells){
-for(const p of S.pieces)
-if(p.pieceTypeId===vc.pieceTypeId&&vc.targetCells.some(t=>t.row===p.row&&t.col===p.col&&p.player==turn ))return p.player;} 
-else if(vc.mode==='capture'){for(const pl of[1,2]){if(!S.init.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))continue; if(!S.pieces.some(p=>p.pieceTypeId===vc.pieceTypeId&&p.player===pl))return pl===1?2:1;}}
+for(const p of S.pieces){
+        console.log("Pieza:", p, "vs pieceTypeIndex:", vc.pieceTypeIndex);
+        if(p.pieceTypeId===vc.pieceTypeIndex&&vc.targetCells.some(t=>t.row===p.row&&t.col===p.col&&p.player==turn ))return p.player;
+        } 
+}
+else if(vc.mode==='capture'){for(const pl of[1,2]){if(!S.init.some(p=>p.pieceTypeId===vc.pieceTypeIndex&&p.player===pl))continue; if(!S.pieces.some(p=>p.pieceTypeId===vc.pieceTypeIndex&&p.player===pl))return pl===1?2:1;}}
 }return null;}
 function click(r,c){
+  console.log("click", r, c);
 if(S.winner)return;
+  console.log("sel:", S.sel, "vm:", S.vm);
 if(S.sel&&S.vm.some(m=>m.row===r&&m.col===c)){
+console.log("moviendo pieza");
 const mp=S.pieces.find(p=>p.row===S.sel.row&&p.col===S.sel.col);
 const pt=G.pieceTypes.find(t=>t.id===mp.pieceTypeId);
 S.pieces=S.pieces.filter(p=>!(p.row===S.sel.row&&p.col===S.sel.col));
