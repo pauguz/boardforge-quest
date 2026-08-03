@@ -81,7 +81,7 @@ export function TopBar() {
                        const initialState = playState ?? createInitialPlayState();
                        console.log(initialState, boardRows, boardCols);
                        const bpts= getBoardPieceTypes();
-                       SendRoomData(al, an, toDispin(initialState, bpts) ,bpts );}
+                       SendRoomData(al, an, toDispin(initialState) ,bpts );}
                   }
         >
             <Share2 className="w-4 h-4 mr-1" /> Compartir

@@ -7,6 +7,7 @@ import { base64ToBlob, ficheroToBlob, } from '@/utils/transformations';
 import { gqlQuery } from '@/api/graphql';
 import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
 import { mapSalaToPlayState } from '@/api/mappers';
+import { getOrCreateAnonymousUser } from '@/utils/auth';
 
 export const selectLudiSalaAndStateByCode = async (roomCode:string, Espera:Function, handleResult1:Function, handleResult2:Function, handleError:Function ) => {
   console.log("intentando obtener datos de", roomCode)
@@ -105,11 +106,8 @@ export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero
 
 export const SendRoomData = async (alt:number, anc:number, dispin, fichero: PieceType[] ) => {
     const ficher= ficheroToBlob(fichero);
-    if( ! localStorage.getItem("creador")){
-      localStorage.setItem('creador', crypto.randomUUID());
-    }
+    const creatorId = await getOrCreateAnonymousUser();
 
-    const creatorId =localStorage.getItem("creador");
     
     const sc:number= localInt("salasCreadas") || 0;
     console.log("Tienes ", sc, " salas creadas y el id con numero: ", creatorId );
