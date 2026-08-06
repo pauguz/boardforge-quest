@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/mini/button";
 import { Input } from "@/components/ui/input";
 import { VictoryConditionDialog } from "./SideEditor/VictoryConditionDialog";
 import { exportGameAsHTML } from "@/utils/gameExport";

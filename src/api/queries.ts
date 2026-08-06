@@ -1,23 +1,3 @@
-// src/api/queries.ts
-
-export const QUERY_LUDISALAS = `
-  query {
-    ludisalaCollection {
-      edges {
-        node {
-          sala_id
-          nombre_juego
-          enjuego
-          alto
-          ancho
-          dispin
-          juego_id
-        }
-      }
-    }
-  }
-`;
-
 export const QUERY_LUDISALA_POR_CODE = `
   query CargarSala($codigo: String!) {
     ludisalaCollection(filter: { codigo: { eq: $codigo } }) {

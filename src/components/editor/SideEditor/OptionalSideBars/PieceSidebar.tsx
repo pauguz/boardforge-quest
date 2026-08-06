@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/mini/button";
 import { CreatePieceDialog } from "../Dialogs/CreatePieceDialog";
 import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} from "@/components/ui/context-menu";
 import { PieceParametersDialog } from "../Dialogs/PieceParametersDialog";

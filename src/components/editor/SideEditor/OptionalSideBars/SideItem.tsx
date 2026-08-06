@@ -1,6 +1,6 @@
 import { PieceType } from '@/types/game';
 import React from 'react';
-import { Button } from '../../../ui/button';
+import { Button } from '../../../ui/mini/button';
 import { cn } from '@/lib/utils';
 import { Trash2 } from "lucide-react";
 import { menuType } from '@/types/menu';

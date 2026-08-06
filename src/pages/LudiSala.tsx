@@ -5,8 +5,9 @@ import { PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, deleteRoom, selectLudiSalaAndStateByCode } from '../services/salaService.ts'
+import {verifyAuthorship, deleteRoom, selectLudiSalaByCode } from '../services/salaService.ts'
 import { incremento, localInt } from '@/utils/roomCode.ts';
+import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 
 const LudiSala = () => {
 
@@ -18,8 +19,12 @@ const LudiSala = () => {
   const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
 
   const { roomCode } = useParams();
-  if (! localStorage.getItem('creador')){localStorage.setItem('creador', crypto.randomUUID())}
-  const localId= localStorage.getItem('creador');
+  // Después
+  const [localId, setLocalId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getOrCreateAnonymousUser().then(setLocalId);
+  }, []);
   
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
@@ -52,7 +57,7 @@ const LudiSala = () => {
     
     // 2. Ejecutamos la función
     verifyAuthorship(roomCode, localId, setCreator, setError );
-    selectLudiSalaAndStateByCode(roomCode, setCargando, setDatos, setFase, setError);
+    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setError);
   }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
 
   if (!datos) return <div>Cargando...</div>;

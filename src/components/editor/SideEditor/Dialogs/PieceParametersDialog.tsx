@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
 import { MovementRule, CaptureMode } from "@/types/game";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/mini/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";

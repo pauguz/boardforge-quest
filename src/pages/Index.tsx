@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/mini/button";
 import { Separator } from "@radix-ui/react-select";
 
 const Index = () => {

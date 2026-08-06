@@ -3,7 +3,7 @@ import { useGameEditor } from "@/context/GameEditorContext";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { VictoryCondition, Position } from "@/types/game";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/mini/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
