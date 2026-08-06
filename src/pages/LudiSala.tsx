@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { BoardGrid } from '@/components/editor/Board/BoardGrid';
 import CloseButton from '@/components/ui/mini/closeButton';
-import { PlayState } from '@/types/game';
+import { PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
 import {verifyAuthorship, deleteRoom, selectLudiSalaByCode } from '../services/salaService.ts'
+import { BoardGrid } from '@/components/boardgrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 
@@ -15,6 +15,7 @@ const LudiSala = () => {
   const [cargando, setCargando] = useState(true); // Estado para el indicador de carga
   const [error, setError] = useState(null);
   const [fase, setFase] = useState<PlayState|null>();
+  const [piezaTypes, setPiezaTypes] = useState<PieceType[]>([]);
   const [creator, setCreator] = useState<boolean>(false);
   const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
 
@@ -76,37 +77,20 @@ const LudiSala = () => {
     }
   return (
     <div className='bg-[#e0d0b0] flex flex-col h-screen bg-background overflow-hidden"' >
-         <div>      {creator &&  <CloseButton onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
-          localStorage.setItem("salasCreadas",  
-                              incremento(localInt("salasCreadas"), -1) 
-                              ) }}/>} </div>
-      <div className="flex-1 flex items-center justify-center p-4 relative ">
-            <div
-              className="grid border border-border rounded overflow-hidden"
-              style={{
-                gridTemplateColumns: `repeat(${ancho}, ${cellSize}px)`,
-                gridTemplateRows: `repeat(${alto}, ${cellSize}px)`,
-              }}
-            >
-              {Array.from({ length: alto * ancho }).map((_, i) => {
-                const row = Math.floor(i / ancho);
-                const col = i % ancho;
-                const isDark = (row + col) % 2 === 1;
-                return (
-                  <div
-                    key={`${row}-${col}`}
-                    onClick={() => handleCellClick(row, col)}
-                    className={cn(
-                      "flex items-center justify-center cursor-pointer relative transition-colors",
-                      isDark ? "bg-board-dark" : "bg-board-light",
-                    )}
-                    style={{ width: cellSize, height: cellSize }}
-                  >
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+      <div>      {creator &&  <CloseButton onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
+                    localStorage.setItem("salasCreadas",  incremento(localInt("salasCreadas"), -1) 
+                              ) }}/>} 
+      </div>
+      <BoardGrid
+        rows={alto}
+        cols={ancho}
+        pieces={fase?.pieces ?? []}
+        pieceTypes={piezaTypes}  // las que cargaste con GraphQL
+        validMoves={fase?.validMoves}
+        selected={fase?.selected}
+        winner={fase?.winner}
+        onCellClick={handleCellClick}
+      />
     </div>
   )
 }
