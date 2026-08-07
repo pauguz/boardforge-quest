@@ -34,7 +34,9 @@ export const selectLudiSalaByCode = async (
     const pieceTypes: PieceType[] = piezas.map(p => ({
       name:         p.simbolo,
       simbolo:      p.simbolo,
-      imageUrl:     p.img_url,
+      imageUrl:     p.img_url === 'https://placehold.co/100x100' 
+      ? `https://placehold.co/100x100?text=${p.simbolo}`
+      : p.img_url,
       moves:        typeof p.movimientos === 'string' ? JSON.parse(p.movimientos) : (p.movimientos ?? []),
       captura_modo: p.cm,
     }));
