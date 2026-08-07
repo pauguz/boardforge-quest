@@ -58,7 +58,9 @@ const LudiSala = () => {
     
     // 2. Ejecutamos la función
     verifyAuthorship(roomCode, localId, setCreator, setError );
-    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setError);
+    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setError);
+    console.log("pieces:", fase?.pieces, "piezaTypes:", piezaTypes);
+    
   }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
 
   if (!datos) return <div>Cargando...</div>;

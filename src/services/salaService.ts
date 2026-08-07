@@ -5,31 +5,52 @@ import { PieceType } from '@/types/game';
 import { generateRoomCode, incremento, localInt} from '../utils/roomCode';
 import { base64ToBlob, ficheroToBlob, } from '@/utils/transformations';
 import { gqlQuery } from '@/api/graphql';
-import { QUERY_LUDISALA_POR_CODE, QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
+import {  QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
 import { mapSalaToPlayState } from '@/api/mappers';
 import { getOrCreateAnonymousUser } from '@/utils/auth';
 
 
-export const selectLudiSalaByCode = async (roomCode:string, Espera:Function, handleResult1:Function, handleResult2:Function, handleError:Function ) => {
-      console.log("intentando obtener datos de", roomCode)
-      try {
-        Espera(true);
-        const { data, error } = await supabase.rpc('get_sala_by_code', { p_codigo: roomCode });
-        const node = data[0];
+export const selectLudiSalaByCode = async (
+  roomCode: string, 
+  Espera: Function, 
+  handleResult1: Function, 
+  handleResult2: Function,
+  handleResult3: Function,
+  handleError: Function
+) => {
+  try {
+    Espera(true);
+    const { data, error } = await supabase.rpc('get_sala_by_code', { p_codigo: roomCode });
+    console.log("1. data:", data, "error:", error);
+    if (error) throw error;
+    const node = data[0];
+    console.log("DISPIN:", node.dispin);
+    handleResult1(node);
 
-      console.log("datos obtenidos de la bd: ", data[0] )
-        if (error) throw error;
-        handleResult1(data[0]);
-        const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
-        const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
-        const playState = mapSalaToPlayState(node, piezas);
-        handleResult2(playState);
-      } catch (err) {
-        handleError(err.message);
-      } finally {
-        Espera(false);
-      }
-    };
+    const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
+    const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
+    console.log("2. piezas:", piezas);
+
+    const pieceTypes: PieceType[] = piezas.map(p => ({
+      name:         p.simbolo,
+      simbolo:      p.simbolo,
+      imageUrl:     p.img_url,
+      moves:        typeof p.movimientos === 'string' ? JSON.parse(p.movimientos) : (p.movimientos ?? []),
+      captura_modo: p.cm,
+    }));
+    console.log("3. pieceTypes:", pieceTypes);
+    handleResult3(pieceTypes);
+
+    const playState = mapSalaToPlayState(node, piezas);
+    console.log("4. playState:", playState);
+    handleResult2(playState);
+  } catch (err) {
+    console.log("ERROR:", err);
+    handleError(err.message);
+  } finally {
+    Espera(false);
+  }
+};
 
 export const verifyAuthorship= async (roomCode:string, localId:string, handleResult:Function, handleError:Function)=>{
   try {console.log('ejecutando funcion de verificacion');
