@@ -83,22 +83,11 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGame = async (localId, nombre, alto, ancho, dispin, codigo,handleResult:Function)=>{
+export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero ,dispin, codigo, victconds, handleResult:Function)=>{
   try{
     console.log("Creando sala con codigo", codigo);
     console.log(nombre, alto, ancho)
-    const {data, error} = await supabase.rpc("create_room_with_game", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_codigo:codigo, p_ip:'1', p_dispin: dispin});
-    handleResult(data);
-    console.log(data);
-    console.log(error);
-  }catch(err){console.log(err)}
-}
-
-export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero ,dispin, codigo,handleResult:Function)=>{
-  try{
-    console.log("Creando sala con codigo", codigo);
-    console.log(nombre, alto, ancho)
-    const {data, error} = await supabase.rpc("create_room_with_game_il", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_piezas:fichero ,p_codigo:codigo, p_ip:'1', p_dispin: dispin, });
+    const {data, error} = await supabase.rpc("create_room_with_game_il", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_piezas:fichero ,p_codigo:codigo, p_ip:'1', p_dispin: dispin, p_condiciones: victconds});
     handleResult(data);
     console.log('dispin', dispin);
     console.log('fichero', fichero);
@@ -108,7 +97,7 @@ export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero
   }catch(err){console.log(err)}
 }
 
-export const SendRoomData = async (alt:number, anc:number, dispin, fichero: PieceType[] ) => {
+export const SendRoomData = async (alt:number, anc:number, dispin, fichero: PieceType[], victconds ) => {
     const ficher= ficheroToBlob(fichero);
 
     const creatorId = await getOrCreateAnonymousUser();
@@ -123,7 +112,7 @@ export const SendRoomData = async (alt:number, anc:number, dispin, fichero: Piec
         window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
       }
 
-      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, ventana );
+      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, ventana, victconds );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 
