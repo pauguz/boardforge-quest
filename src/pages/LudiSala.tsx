@@ -29,6 +29,8 @@ const LudiSala = () => {
 
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
+    if (!localId) return;  // ← esperar a que localId esté listo
+  
     const channel = supabase.channel(`room:${roomCode}`, {
       config: {
         presence: { key: localId }
@@ -50,23 +52,20 @@ const LudiSala = () => {
         joined_at: new Date().toISOString()
       });
     });
-    
-    // 2. Ejecutamos la función
-    verifyAuthorship(roomCode, localId, setIsCreator, setError );
+  
+    verifyAuthorship(roomCode, localId, setIsCreator, setError);
     selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setError);
-    console.log("pieces:", fase?.pieces, "piezaTypes:", piezaTypes);
-    
-  }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
+  
+  }, [roomCode, localId]);  // ← añadir localId // 3. Se vuelve a ejecutar si la prop cambia
 
   useEffect(() => {
     if (users.length === 2 && datos?.sala_id) {
       const myNumber = users.find(u => u.id === localId)?.number;
-      if (myNumber === 1) {
-        supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id });
-      }
+      supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id })
+        .then(({ data, error }) => console.log("iniciar_partida:", data, error));
+      
     }
   }, [users, datos]);
-
   if (!datos) return <div>Cargando...</div>;
 
   console.log('El ID local y el de la BD: ', localId, datos.creador_id)
@@ -78,9 +77,43 @@ const LudiSala = () => {
   console.log('alto y ancho: ', al, an);
   const cellSize = Math.min(Math.floor(600 / Math.max(alto, ancho)), 64);
  
-  const handleCellClick = (row: number, col: number) => {
-    console.log("Casilla clickeada!: ", row, col)
+  const handleCellClick = async (row: number, col: number) => {
+    if (!fase || fase.winner) return;
+    
+    const myPosition = users.find(u => u.id === localId)?.number;
+    if (!myPosition || myPosition !== fase.turn) return;
+  
+    // selección
+    if (!fase.selected) {
+      const piece = fase.pieces.find(p => p.row === row && p.col === col && p.player === myPosition);
+      if (!piece) return;
+      const pt = piezaTypes[piece.pieceTypeIndex];
+      if (!pt) return;
+      const { moves } = getValidMoves(piece, pt, fase.pieces, alto, ancho);
+      setFase({ ...fase, selected: { row, col }, validMoves: moves });
+      return;
     }
+  
+    // movimiento
+    if (fase.validMoves.some(m => m.row === row && m.col === col)) {
+      const { data, error } = await supabase.rpc('hacer_movimiento', {
+        p_sala_id: datos.sala_id,
+        p_from_row: fase.selected.row,
+        p_from_col: fase.selected.col,
+        p_to_row: row,
+        p_to_col: col,
+      });
+  
+      if (error) {
+        console.error('Error al mover:', error);
+        return;
+      }
+  
+      console.log('Resultado movimiento:', data);
+    } else {
+      setFase({ ...fase, selected: null, validMoves: [] });
+    }
+  };
   return (
     <div className='bg-[#e0d0b0] flex flex-col h-screen bg-background overflow-hidden"' >
       <div>      {isCreator &&  <CloseButton onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
