@@ -112,7 +112,7 @@ export const SendRoomData = async (alt:number, anc:number, dispin, fichero: Piec
         window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
       }
 
-      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, ventana, victconds );
+      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, victconds, ventana );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 

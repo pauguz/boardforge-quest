@@ -16,7 +16,7 @@ const LudiSala = () => {
   const [error, setError] = useState(null);
   const [fase, setFase] = useState<PlayState|null>();
   const [piezaTypes, setPiezaTypes] = useState<PieceType[]>([]);
-  const [creator, setCreator] = useState<boolean>(false);
+  const [isCreator, setIsCreator] = useState<boolean>(false);
   const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
 
   const { roomCode } = useParams();
@@ -26,7 +26,7 @@ const LudiSala = () => {
   useEffect(() => {
     getOrCreateAnonymousUser().then(setLocalId);
   }, []);
-  
+
   //Enumeracion de Usuarios en tiempo real 
   useEffect(() => {
     const channel = supabase.channel(`room:${roomCode}`, {
@@ -37,16 +37,11 @@ const LudiSala = () => {
   
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState();
-    
-      // Convertir a array de usuarios
       const userIds = Object.keys(state);
-    
-      // Asignar números
       const numberedUsers = userIds.map((id, index) => ({
         id,
         number: index + 1
       }));
-    
       setUsers(numberedUsers);
     });
   
@@ -57,16 +52,25 @@ const LudiSala = () => {
     });
     
     // 2. Ejecutamos la función
-    verifyAuthorship(roomCode, localId, setCreator, setError );
+    verifyAuthorship(roomCode, localId, setIsCreator, setError );
     selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setError);
     console.log("pieces:", fase?.pieces, "piezaTypes:", piezaTypes);
     
   }, [roomCode]); // 3. Se vuelve a ejecutar si la prop cambia
 
+  useEffect(() => {
+    if (users.length === 2 && datos?.sala_id) {
+      const myNumber = users.find(u => u.id === localId)?.number;
+      if (myNumber === 1) {
+        supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id });
+      }
+    }
+  }, [users, datos]);
+
   if (!datos) return <div>Cargando...</div>;
 
   console.log('El ID local y el de la BD: ', localId, datos.creador_id)
-  console.log("Es creador ", creator);
+  console.log("Es creador ", isCreator);
   const {alto:al, ancho:an}=datos;
   const alto= parseInt(al, 2);
   const ancho= parseInt(an, 2);
@@ -79,7 +83,7 @@ const LudiSala = () => {
     }
   return (
     <div className='bg-[#e0d0b0] flex flex-col h-screen bg-background overflow-hidden"' >
-      <div>      {creator &&  <CloseButton onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
+      <div>      {isCreator &&  <CloseButton onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
                     localStorage.setItem("salasCreadas",  incremento(localInt("salasCreadas"), -1) 
                               ) }}/>} 
       </div>
