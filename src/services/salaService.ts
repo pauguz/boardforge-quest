@@ -16,6 +16,7 @@ export const selectLudiSalaByCode = async (
   handleResult1: Function, 
   handleResult2: Function,
   handleResult3: Function,
+  handleResult4: Function,
   handleError: Function
 ) => {
   try {
@@ -30,7 +31,10 @@ export const selectLudiSalaByCode = async (
     const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
     const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
     console.log("2. piezas:", piezas);
-
+    const mapping: Record<string, number> = {};
+    piezas.forEach((p, i) => { mapping[p.codigo] = i; });
+    handleResult4(mapping);  
+    
     const pieceTypes: PieceType[] = piezas.map(p => ({
       name:         p.simbolo,
       simbolo:      p.simbolo,

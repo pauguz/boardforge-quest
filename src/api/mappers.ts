@@ -1,21 +1,6 @@
 
 import { BoardPiece, PlayState } from "@/types/game";
 
-interface PiezaTipoGQL {
-  codigo: string;
-  simbolo: string;
-  movimientos: Record<string, unknown>;
-  cm: string;
-  img_url: string;
-}
-
-interface DispinEntry {
-  code: string;
-  player: 1 | 2;
-  row: number;
-  col: number;
-}
-
 export function mapSalaToPlayState(node: any, piezas: any[]): PlayState {
   const dispin: Array<{idx?: number, code?: string, player: 1|2, row: number, col: number}> 
   = typeof node.dispin === 'string' 
