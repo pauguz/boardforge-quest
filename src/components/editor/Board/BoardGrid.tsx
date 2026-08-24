@@ -3,13 +3,15 @@ import { useGeneralEditor } from "@/context/GeneralEditorContext";
 import { cn } from "@/lib/utils";
 
 export function BoardGrid() {
+  //contextual 
   const {
     boardRows, boardCols, boardPieces, setBoardPieces,
     currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
     
   } = useGameEditor();
   const {selectedPieceTypeIndex, pieceTypes, addPieceType, }=useGeneralEditor();
-    
+  
+  //handle cell click
   const handleCellClick = (row: number, col: number) => {
     if (isPlaying) {
       handlePlayClick(row, col);

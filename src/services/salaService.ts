@@ -22,7 +22,7 @@ export const selectLudiSalaByCode = async (
   try {
     Espera(true);
     const { data, error } = await supabase.rpc('get_sala_by_code', { p_codigo: roomCode });
-    console.log("1. data:", data, "error:", error);
+    console.log("1. datos de la sala:", data, "error:", error);
     if (error) throw error;
     const node = data[0];
     console.log("DISPIN:", node.dispin);
@@ -30,7 +30,7 @@ export const selectLudiSalaByCode = async (
 
     const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
     const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
-    console.log("2. piezas:", piezas);
+    console.log("2. piezas (formato BD):", piezas);
     const mapping: Record<string, number> = {};
     piezas.forEach((p, i) => { mapping[p.codigo] = i; });
     handleResult4(mapping);  
@@ -74,7 +74,7 @@ export const verifyAuthorship= async (roomCode:string, localId:string, handleRes
     const { data, error } = await supabase
     .rpc("is_owner", { room_id: roomCode });
     handleResult(data);
-    console.log("RPC result:", data, error)
+    console.log("Es creador:", data, "Error: " ,error)
   } catch(err:any) {
     handleError(err.message);
   }

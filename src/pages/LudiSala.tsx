@@ -23,7 +23,6 @@ const LudiSala = () => {
   const { roomCode } = useParams();
   const [localId, setLocalId] = useState<string | null>(null);
   const [myPosition, setMyPosition] = useState<number | null>(null);
-  const [jugadoresActuales, setJugadoresActuales] = useState<number>(0);
   const cargarSala = () => {
     selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, setError);
   }
@@ -104,20 +103,15 @@ const LudiSala = () => {
 
   if (!datos) return <div>Cargando...</div>;
 
-  console.log('El ID local y el de la BD: ', localId, datos.creador_id)
+  //console.log('El ID local ', localId)
   console.log("Es creador ", isCreator);
   const {alto:al, ancho:an, magnitud:mag}=datos;
   const alto= parseInt(al, 2);
   const ancho= parseInt(an, 2);
-  console.log('magnitud y jugadores actuales: ', mag, jugadoresActuales);
-
-  console.log('alto y ancho: ', al, an);
-  const cellSize = Math.min(Math.floor(600 / Math.max(alto, ancho)), 64);
+  console.log('magnitud y jugadores actuales: ', mag, datos.jugadores_actuales);
  
   const handleCellClick = async (row: number, col: number) => {
     if (!fase || fase.winner) return;
-    
-    const myPosition = users.find(u => u.id === localId)?.number;
     if (!myPosition || myPosition !== fase.turn) return;
   
     // selección
@@ -153,23 +147,25 @@ const LudiSala = () => {
   };
   return (
     <div className='bg-[#e0d0b0] flex flex-col h-screen bg-background overflow-hidden"' >
-      <div>      {isCreator &&  <CloseButton 
+      <div>      
+        {isCreator &&  <CloseButton 
                     onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
                     localStorage.setItem("salasCreadas",  incremento(localInt("salasCreadas"), -1) 
                               ) }}/>} 
+        {datos.enjuego === '0' && (
+          <div>
+            <p>{datos.jugadores_actuales}/{mag} jugadores en la sala</p>
+            <button 
+              onClick={() => {unirseASala(datos, setMyPosition, setError, cargarSala); 
+                              console.log('ERROR CREADO DESDE UNIRSE A SALA' ,error); }}
+              disabled={myPosition !== null || datos.jugadores_actuales >= mag}
+            >
+              {myPosition ? `Jugador ${myPosition}` : 'Unirse'}
+            </button>
+          </div>
+        )}
       </div>
-      {datos.enjuego === '0' && (
-        <div>
-          <p>{datos.jugadores_actuales}/{mag} jugadores en la sala</p>
-          <button 
-            onClick={() => {unirseASala(datos, setMyPosition, setError, cargarSala); 
-                            console.log('ERROR CREADO DESDE UNIRSE A SALA' ,error); }}
-            disabled={myPosition !== null || datos.jugadores_actuales >= mag}
-          >
-            {myPosition ? `Jugador ${myPosition}` : 'Unirse'}
-          </button>
-        </div>
-      )}
+
       <BoardGrid
         rows={alto}
         cols={ancho}
