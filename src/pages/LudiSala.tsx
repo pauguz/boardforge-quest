@@ -4,7 +4,7 @@ import { BoardPiece, PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, deleteRoom, selectLudiSalaByCode } from '../services/salaService.ts'
+import {verifyAuthorship, deleteRoom, selectLudiSalaByCode, unirseASala } from '../services/salaService.ts'
 import { BoardGrid } from '@/components/boardgrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
@@ -20,17 +20,20 @@ const LudiSala = () => {
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [codigoToIndex, setCodigoToIndex] = useState<Record<string, number>>({});
   const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
-
   const { roomCode } = useParams();
-  // Después
   const [localId, setLocalId] = useState<string | null>(null);
+  const [myPosition, setMyPosition] = useState<number | null>(null);
+  const [jugadoresActuales, setJugadoresActuales] = useState<number>(0);
+  const cargarSala = () => {
+    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, setError);
+  }
 
   useEffect(() => {
     getOrCreateAnonymousUser().then(setLocalId);
   }, []);
 
-// useEffect 1: canal de presence y realtime (solo se crea una vez con localId)
-useEffect(() => {
+  // useEffect 1: canal de presence y realtime (solo se crea una vez con localId)
+  useEffect(() => {
   if (!localId) return;
 
   const channel = supabase.channel(`room:${roomCode}`, {
@@ -55,63 +58,58 @@ useEffect(() => {
   });
 
   verifyAuthorship(roomCode, localId, setIsCreator, setError);
-  selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, setError);
+  cargarSala();
 
   return () => { supabase.removeChannel(channel); };  // cleanup
 
 }, [roomCode, localId]);
 
-// useEffect 2: realtime de sala (espera a que datos esté listo)
-useEffect(() => {
-  if (!localId || !datos?.sala_id) return;
-
-  const salaChannel = supabase.channel(`sala:${datos.sala_id}`);
-
-  salaChannel.on(
-    'postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'sala', filter: `id=eq.${datos.sala_id}` },
-    (payload) => {
-      const nuevaSala = payload.new;
-      const tablero = typeof nuevaSala.tablero === 'string'
-        ? JSON.parse(nuevaSala.tablero)
-        : nuevaSala.tablero;
-
-      const pieces: BoardPiece[] = tablero.map((entry: any) => ({
-        pieceTypeIndex: codigoToIndex[entry.code] ?? 0,
-        player: entry.player,
-        row: entry.row,
-        col: entry.col,
-      }));
-
-      setFase(prev => ({
-        ...prev!,
-        pieces,
-        turn: nuevaSala.turn,
-        winner: nuevaSala.winner ?? null,
-        selected: null,
-        validMoves: [],
-      }));
-    }
-  ).subscribe();
-
-  return () => { supabase.removeChannel(salaChannel); };  // cleanup
-
-}, [localId, datos?.sala_id, codigoToIndex]);
+  // useEffect 2: realtime de sala (espera a que datos esté listo)
   useEffect(() => {
-    if (users.length === 2 && datos?.sala_id) {
-      const myNumber = users.find(u => u.id === localId)?.number;
-      supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id })
-        .then(({ data, error }) => console.log("iniciar_partida:", data, error));
-      
-    }
-  }, [users, datos]);
+    if (!localId || !datos?.sala_id) return;
+
+    const salaChannel = supabase.channel(`sala:${datos.sala_id}`);
+
+    salaChannel.on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'sala', filter: `id=eq.${datos.sala_id}` },
+      (payload) => {
+        console.log('PAYLOAD COMPLETO:', payload.new);
+        const nuevaSala = payload.new;
+        const tablero = typeof nuevaSala.tablero === 'string'
+          ? JSON.parse(nuevaSala.tablero)
+          : nuevaSala.tablero;
+        console.log('TABLERO PARSEADO:', tablero);
+        const pieces: BoardPiece[] = tablero.map((entry: any) => ({
+          pieceTypeIndex: codigoToIndex[entry.code] ?? 0,
+          player: entry.player,
+          row: entry.row,
+          col: entry.col,
+        }));
+
+        setFase(prev => ({
+          ...prev!,
+          pieces,
+          turn: nuevaSala.turn,
+          winner: nuevaSala.winner ?? null,
+          selected: null,
+          validMoves: [],
+        }));
+      }
+    ).subscribe();
+
+    return () => { supabase.removeChannel(salaChannel); };  // cleanup
+
+  }, [localId, datos?.sala_id, codigoToIndex]);
+
   if (!datos) return <div>Cargando...</div>;
 
   console.log('El ID local y el de la BD: ', localId, datos.creador_id)
   console.log("Es creador ", isCreator);
-  const {alto:al, ancho:an}=datos;
+  const {alto:al, ancho:an, magnitud:mag}=datos;
   const alto= parseInt(al, 2);
   const ancho= parseInt(an, 2);
+  console.log('magnitud y jugadores actuales: ', mag, jugadoresActuales);
 
   console.log('alto y ancho: ', al, an);
   const cellSize = Math.min(Math.floor(600 / Math.max(alto, ancho)), 64);
@@ -160,11 +158,23 @@ useEffect(() => {
                     localStorage.setItem("salasCreadas",  incremento(localInt("salasCreadas"), -1) 
                               ) }}/>} 
       </div>
+      {datos.enjuego === '0' && (
+        <div>
+          <p>{datos.jugadores_actuales}/{mag} jugadores en la sala</p>
+          <button 
+            onClick={() => {unirseASala(datos, setMyPosition, setError, cargarSala); 
+                            console.log('ERROR CREADO DESDE UNIRSE A SALA' ,error); }}
+            disabled={myPosition !== null || datos.jugadores_actuales >= mag}
+          >
+            {myPosition ? `Jugador ${myPosition}` : 'Unirse'}
+          </button>
+        </div>
+      )}
       <BoardGrid
         rows={alto}
         cols={ancho}
         pieces={fase?.pieces ?? []}
-        pieceTypes={piezaTypes}  // las que cargaste con GraphQL
+        pieceTypes={piezaTypes}  
         validMoves={fase?.validMoves}
         selected={fase?.selected}
         winner={fase?.winner}

@@ -58,6 +58,17 @@ export const selectLudiSalaByCode = async (
   }
 };
 
+export const unirseASala = async (datos, handleResult:Function,handleError, recargarSala:Function) => {
+  const { data, error } = await supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id });
+  if (error) {
+    if (error.message === 'SALA_FULL') alert('Sala llena');
+    console.log('Error al unirse a la sala:', error);
+    return;
+  }
+  handleResult(data);
+  recargarSala()
+};
+
 export const verifyAuthorship= async (roomCode:string, localId:string, handleResult:Function, handleError:Function)=>{
   try {console.log('ejecutando funcion de verificacion');
     const { data, error } = await supabase
