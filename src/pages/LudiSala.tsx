@@ -4,7 +4,7 @@ import { BoardPiece, PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, deleteRoom, selectLudiSalaByCode, unirseASala } from '../services/salaService.ts'
+import {verifyAuthorship, deleteRoom, selectLudiSalaByCode, unirseASala, listarJugadoresSala } from '../services/salaService.ts'
 import { BoardGrid } from '@/components/boardgrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
@@ -19,7 +19,7 @@ const LudiSala = () => {
   const [piezaTypes, setPiezaTypes] = useState<PieceType[]>([]);
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [codigoToIndex, setCodigoToIndex] = useState<Record<string, number>>({});
-  const [users, setUsers] = useState<{ id: string; number: number }[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
   const { roomCode } = useParams();
   const [localId, setLocalId] = useState<string | null>(null);
   const [myPosition, setMyPosition] = useState<number | null>(null);
@@ -33,59 +33,74 @@ const LudiSala = () => {
 
   // useEffect 1: canal de presence y realtime (solo se crea una vez con localId)
   useEffect(() => {
-  if (!localId) return;
-
-  const channel = supabase.channel(`room:${roomCode}`, {
-    config: { presence: { key: localId } }
-  });
-
-  channel.on("presence", { event: "sync" }, () => {
-    const state = channel.presenceState();
-    const userIds = Object.keys(state);
-    const numberedUsers = userIds.map((id, index) => ({
-      id,
-      number: index + 1
-    }));
-    setUsers(numberedUsers);
-  });
-
-  channel.subscribe(async () => {
-    await channel.track({
-      localId,
-      joined_at: new Date().toISOString()
+    if (!localId) return;
+    const channel = supabase.channel(`room:${roomCode}`, {
+      config: { presence: { key: localId } }
     });
-  });
 
-  verifyAuthorship(roomCode, localId, setIsCreator, setError);
-  cargarSala();
+    channel.on("presence", { event: "sync" }, () => {
+      const state = channel.presenceState();
+      const userIds = Object.keys(state);
+    
+      setUsers(userIds);
+    });
 
-  return () => { supabase.removeChannel(channel); };  // cleanup
+    channel.subscribe(async () => {
+      await channel.track({
+        localId,
+        joined_at: new Date().toISOString()
+      });
+    });
 
-}, [roomCode, localId]);
+    verifyAuthorship(roomCode, localId, setIsCreator, setError);
+    cargarSala();
+
+    return () => { supabase.removeChannel(channel); };  // cleanup
+
+  }, [roomCode, localId]);
 
   // useEffect 2: realtime de sala (espera a que datos esté listo)
   useEffect(() => {
     if (!localId || !datos?.sala_id) return;
-
+  
+    console.log('👤 localId:', localId);
+    console.log('🏠 sala_id:', datos.sala_id);
+  
+    listarJugadoresSala(datos, localId, setMyPosition);
+  
     const salaChannel = supabase.channel(`sala:${datos.sala_id}`);
-
+  
     salaChannel.on(
       'postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'sala', filter: `id=eq.${datos.sala_id}` },
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'sala',
+        //filter: `id=eq.${datos.sala_id}`,
+      },
       (payload) => {
-        console.log('PAYLOAD COMPLETO:', payload.new);
+        console.log('🔥🔥🔥 UPDATE RECIBIDO');
+        console.log('PAYLOAD:', payload);
+        console.log('NUEVA SALA:', payload.new);
+  
         const nuevaSala = payload.new;
-        const tablero = typeof nuevaSala.tablero === 'string'
-          ? JSON.parse(nuevaSala.tablero)
-          : nuevaSala.tablero;
-        console.log('TABLERO PARSEADO:', tablero);
+  
+        const tablero =
+          typeof nuevaSala.tablero === 'string'
+            ? JSON.parse(nuevaSala.tablero)
+            : nuevaSala.tablero;
+  
+        console.log('TABLERO RECIBIDO:', tablero);
+  
         const pieces: BoardPiece[] = tablero.map((entry: any) => ({
           pieceTypeIndex: codigoToIndex[entry.code] ?? 0,
           player: entry.player,
           row: entry.row,
           col: entry.col,
         }));
-
+  
+        console.log('PIEZAS CONVERTIDAS:', pieces);
+  
         setFase(prev => ({
           ...prev!,
           pieces,
@@ -95,12 +110,16 @@ const LudiSala = () => {
           validMoves: [],
         }));
       }
-    ).subscribe();
-
-    return () => { supabase.removeChannel(salaChannel); };  // cleanup
-
+    ).subscribe((status) => {
+      console.log('📡 REALTIME STATUS:', status);
+    });
+  
+    return () => {
+      console.log('🧹 Eliminando canal:', datos.sala_id);
+      supabase.removeChannel(salaChannel);
+    };
   }, [localId, datos?.sala_id, codigoToIndex]);
-
+  
   if (!datos) return <div>Cargando...</div>;
 
   //console.log('El ID local ', localId)

@@ -58,6 +58,16 @@ export const selectLudiSalaByCode = async (
   }
 };
 
+export const listarJugadoresSala = async (datos, localId, setMyPosition:Function) => {  
+  supabase.rpc('obtener_jugadores_sala', { p_sala_id: datos.sala_id })
+    .then(({ data }) => {
+      if (!data) return;
+      console.log('jugadores:', data);
+      const yo = data.find((j: any) => j.user_id === localId);
+      if (yo) setMyPosition(yo.posicion);
+    });
+  };
+
 export const unirseASala = async (datos, handleResult:Function,handleError, recargarSala:Function) => {
   const { data, error } = await supabase.rpc('iniciar_partida', { p_sala_id: datos.sala_id });
   if (error) {

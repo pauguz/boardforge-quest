@@ -24,7 +24,7 @@ export function PieceParametersDialog({ pieceTypeIndex: pieceTypeIndex, open, on
   const [dx, setDx] = useState(0);
   const [dy, setDy] = useState(0);
   const [moveType, setMoveType] = useState<'range' | 'indefinite'>('range');
-  const [range, setRange] = useState(2);
+  const [range, setRange] = useState(1);
   const [rotate, setRotate] = useState(false);
 
   if (!pieceType) return null;
