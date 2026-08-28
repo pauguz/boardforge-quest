@@ -68,27 +68,27 @@ const LudiSala = () => {
   
     listarJugadoresSala(datos, localId, setMyPosition);
   
-    const salaChannel = supabase.channel(`sala:${datos.sala_id}`);
+    // ⭐ CAMBIO: Escuchar partida en lugar de sala
+    const partidaChannel = supabase.channel(`partida:${datos.sala_id}`);
   
-    salaChannel.on(
+    partidaChannel.on(
       'postgres_changes',
       {
         event: 'UPDATE',
         schema: 'public',
-        table: 'sala',
-        //filter: `id=eq.${datos.sala_id}`,
+        table: 'partida',  // ⭐ CAMBIO: de 'sala' a 'partida'
       },
       (payload) => {
         console.log('🔥🔥🔥 UPDATE RECIBIDO');
         console.log('PAYLOAD:', payload);
-        console.log('NUEVA SALA:', payload.new);
+        console.log('NUEVA PARTIDA:', payload.new);
   
-        const nuevaSala = payload.new;
+        const nuevaPartida = payload.new;
   
         const tablero =
-          typeof nuevaSala.tablero === 'string'
-            ? JSON.parse(nuevaSala.tablero)
-            : nuevaSala.tablero;
+          typeof nuevaPartida.tablero === 'string'
+            ? JSON.parse(nuevaPartida.tablero)
+            : nuevaPartida.tablero;
   
         console.log('TABLERO RECIBIDO:', tablero);
   
@@ -104,8 +104,8 @@ const LudiSala = () => {
         setFase(prev => ({
           ...prev!,
           pieces,
-          turn: nuevaSala.turn,
-          winner: nuevaSala.winner ?? null,
+          turn: nuevaPartida.turn,
+          winner: nuevaPartida.winner,
           selected: null,
           validMoves: [],
         }));
@@ -116,7 +116,7 @@ const LudiSala = () => {
   
     return () => {
       console.log('🧹 Eliminando canal:', datos.sala_id);
-      supabase.removeChannel(salaChannel);
+      supabase.removeChannel(partidaChannel);
     };
   }, [localId, datos?.sala_id, codigoToIndex]);
   
