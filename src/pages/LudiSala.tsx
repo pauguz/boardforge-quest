@@ -27,6 +27,13 @@ const LudiSala = () => {
     selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, setError);
   }
 
+  const actualizarJugadores = (nuevoContador: number) => {
+    setDatos(prev => ({
+      ...prev,
+      jugadores_actuales: nuevoContador
+    }));
+  };
+
   useEffect(() => {
     getOrCreateAnonymousUser().then(setLocalId);
   }, []);
@@ -59,67 +66,97 @@ const LudiSala = () => {
 
   }, [roomCode, localId]);
 
-  // useEffect 2: realtime de sala (espera a que datos esté listo)
+  // useEffect 2: cargar jugadores iniciales y listar
   useEffect(() => {
     if (!localId || !datos?.sala_id) return;
-  
-    console.log('👤 localId:', localId);
-    console.log('🏠 sala_id:', datos.sala_id);
-  
-    listarJugadoresSala(datos, localId, setMyPosition);
-  
-    // ⭐ CAMBIO: Escuchar partida en lugar de sala
+    listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
+  }, [localId, datos?.sala_id]);
+
+  // useEffect 3: realtime del contador de jugadores (tabla jugador)
+  useEffect(() => {
+    if (!localId || !datos?.sala_id) return;
+
+    const jugadorChannel = supabase.channel(`jugadores:${datos.sala_id}`);
+
+    jugadorChannel.on(
+      'postgres_changes',
+      {
+        event: '*', // INSERT, UPDATE, DELETE
+        schema: 'public',
+        table: 'jugador',
+        filter: `sala_id=eq.${datos.sala_id}`,
+      },
+      (payload) => {
+        console.log('👥 CAMBIO EN JUGADORES:', payload);
+        // Recargar lista completa de jugadores
+        listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
+      }
+    ).subscribe((status) => {
+      console.log('📡 JUGADORES CHANNEL STATUS:', status);
+    });
+
+    return () => {
+      supabase.removeChannel(jugadorChannel);
+    };
+  }, [localId, datos?.sala_id]);
+
+  // useEffect 4: realtime del tablero (tabla partida)
+  // También detecta cuándo comienza la partida
+  useEffect(() => {
+    if (!localId || !datos?.sala_id) return;
+
     const partidaChannel = supabase.channel(`partida:${datos.sala_id}`);
-  
+
     partidaChannel.on(
       'postgres_changes',
       {
-        event: 'UPDATE',
+        event: '*', // INSERT o UPDATE
         schema: 'public',
-        table: 'partida',  // ⭐ CAMBIO: de 'sala' a 'partida'
+        table: 'partida',
+        filter: `sala_id=eq.${datos.sala_id}`,
       },
       (payload) => {
-        console.log('🔥🔥🔥 UPDATE RECIBIDO');
-        console.log('PAYLOAD:', payload);
-        console.log('NUEVA PARTIDA:', payload.new);
-  
+        console.log('🔥 CAMBIO EN PARTIDA:', payload);
+        
         const nuevaPartida = payload.new;
-  
+        if (!nuevaPartida) return;
+
+        // Marcar que el juego comenzó (partida existe = enjuego es true)
+        setDatos(prev => ({
+          ...prev,
+          enjuego: '1'
+        }));
+
         const tablero =
           typeof nuevaPartida.tablero === 'string'
             ? JSON.parse(nuevaPartida.tablero)
             : nuevaPartida.tablero;
-  
-        console.log('TABLERO RECIBIDO:', tablero);
-  
+
         const pieces: BoardPiece[] = tablero.map((entry: any) => ({
           pieceTypeIndex: codigoToIndex[entry.code] ?? 0,
           player: entry.player,
           row: entry.row,
           col: entry.col,
         }));
-  
-        console.log('PIEZAS CONVERTIDAS:', pieces);
-  
+
         setFase(prev => ({
           ...prev!,
           pieces,
           turn: nuevaPartida.turn,
-          winner: nuevaPartida.winner,
           selected: null,
           validMoves: [],
+          winner: nuevaPartida.winner,
         }));
       }
     ).subscribe((status) => {
-      console.log('📡 REALTIME STATUS:', status);
+      console.log('📡 PARTIDA CHANNEL STATUS:', status);
     });
-  
+
     return () => {
-      console.log('🧹 Eliminando canal:', datos.sala_id);
       supabase.removeChannel(partidaChannel);
     };
   }, [localId, datos?.sala_id, codigoToIndex]);
-  
+
   if (!datos) return <div>Cargando...</div>;
 
   //console.log('El ID local ', localId)
@@ -175,8 +212,12 @@ const LudiSala = () => {
           <div>
             <p>{datos.jugadores_actuales}/{mag} jugadores en la sala</p>
             <button 
-              onClick={() => {unirseASala(datos, setMyPosition, setError, cargarSala); 
-                              console.log('ERROR CREADO DESDE UNIRSE A SALA' ,error); }}
+              onClick={() => {
+                unirseASala(datos, setMyPosition, setError, () => {
+                  cargarSala();
+                  listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
+                }); 
+              }}
               disabled={myPosition !== null || datos.jugadores_actuales >= mag}
             >
               {myPosition ? `Jugador ${myPosition}` : 'Unirse'}
