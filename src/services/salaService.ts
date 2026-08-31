@@ -154,13 +154,12 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGameIL = async ( p_nombre, p_alto, p_ancho, p_piezas, p_dispin, p_codigo, p_condiciones, handleResult:Function)=>{
+export const createRoomwithGameIL = async ( p_nombre, p_alto, p_ancho, p_piezas, p_dispin, p_condiciones, handleResult:Function)=>{
   try{
-    console.log("Creando sala con codigo", p_codigo);
     console.log(p_nombre, p_alto, p_ancho)
     const {data, error} = await supabase.rpc("create_room_with_game_il", 
       {p_nombre, p_alto, p_ancho, p_piezas, p_ip:'1', p_dispin, p_condiciones});
-    handleResult(data);
+    handleResult(data[0]);
     console.log('dispin', p_dispin);
     console.log('fichero', p_piezas);
 
@@ -178,13 +177,12 @@ export const SendRoomData = async (alt:number, anc:number, dispin, fichero: Piec
     console.log("Tienes ", sc, " salas creadas y el id con numero: ", creatorId );
 
     if(sc<3){
-      const codSala = generateRoomCode();
       console.log('Iniciando Creacion de Sala y Juego, sc: ', sc)
       const ventana = (data)=>{      
-        window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
+        window.open(`/sala/${data.codigo}`, "_blank", "noopener,noreferrer");
       }
 
-      createRoomwithGameIL( 'juego',alt, anc, ficher, dispin ,codSala, victconds, ventana );
+      createRoomwithGameIL( 'juego',alt, anc, ficher, dispin , victconds, ventana );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 

@@ -10,6 +10,7 @@ import { BoardGrid } from '@/components/boardgrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 import { getValidMoves } from '@/utils/movement.ts';
+import NotFound from './NotFound.tsx';
 
 const LudiSala = () => {
 
@@ -26,22 +27,18 @@ const LudiSala = () => {
   const [myPosition, setMyPosition] = useState<number | null>(null);
   const navigate = useNavigate();
 
-
   const cargarSala = () => {
     selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, (err) => {
       console.error('Error al cargar sala:', err);
       if (err === 'SALA_NOT_FOUND') {  // ← Compara directamente contra el string
-        navigate('/404', { 
-          state: { 
-            error: 'room-not-found',
-            details: `Room code: ${roomCode}`
-          } 
-        });
+          setError('room-not-found');  // ← Solo setea el error, sin navegar
       } else {
         setError(err);
       }
     });  
   }
+
+
 
   const actualizarJugadores = (nuevoContador: number) => {
     setDatos(prev => ({
@@ -71,8 +68,8 @@ const LudiSala = () => {
       await channel.track({
         localId,
         joined_at: new Date().toISOString()
+        });
       });
-    });
 
     verifyAuthorship(roomCode, localId, setIsCreator, setError);
     cargarSala();
@@ -90,7 +87,6 @@ const LudiSala = () => {
   // useEffect 3: realtime del contador de jugadores (tabla jugador)
   useEffect(() => {
     if (!localId || !datos?.sala_id) return;
-
     const jugadorChannel = supabase.channel(`jugadores:${datos.sala_id}`);
 
     jugadorChannel.on(
@@ -172,8 +168,17 @@ const LudiSala = () => {
     };
   }, [localId, datos?.sala_id, codigoToIndex]);
 
-  if (!datos) return <div>Cargando...</div>;
+  if (!datos || cargando) return <div>Cargando...</div>;
 
+  // Mostrar error si existe
+  if (error) {
+    return (
+      <NotFound 
+        errorType={error === 'room-not-found' ? 'room-not-found' : 'game-error'}
+        roomCode={roomCode}
+      />
+    );
+  }
   //console.log('El ID local ', localId)
   console.log("Es creador ", isCreator);
   const {alto:al, ancho:an, magnitud:mag}=datos;
