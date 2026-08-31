@@ -16,9 +16,12 @@ const Index = () => {
         <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/editor')}>
           Crear Juego
         </Button>
-        <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/ayuda')}>
-          Ayuda
-        </Button>
+        {//
+         //         <Button size="lg" className="text-lg px-10 py-6" onClick={() => navigate('/ayuda')}>
+         //         Ayuda
+         //       </Button>
+        }
+
       </div>
     </div>
   );
