@@ -6,7 +6,7 @@ const LogoReturn = () => {
     const navigate =useNavigate()
   return (
     <Button variant="ghost" size="sm" onClick={() => navigate('/')}   >
-        Board<span className="text-primary">Forge</span>
+        Table<span className="text-primary">Fabro</span>
   </Button>
   )
 }
