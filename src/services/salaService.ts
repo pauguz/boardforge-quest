@@ -13,10 +13,10 @@ import { getOrCreateAnonymousUser } from '@/utils/auth';
 export const selectLudiSalaByCode = async (
   roomCode: string, 
   Espera: Function, 
-  handleResult1: Function, 
-  handleResult2: Function,
-  handleResult3: Function,
-  handleResult4: Function,
+  handleDatos: Function, 
+  handleFase: Function,
+  handlePiezaTypes: Function,
+  handleCodigoToIndex: Function,
   handleError: Function
 ) => {
   try {
@@ -24,36 +24,54 @@ export const selectLudiSalaByCode = async (
     console.log("Buscando sala con codigo:", roomCode);
     const { data, error } = await supabase.rpc('get_sala_by_code', { p_codigo: roomCode });
     console.log("1. datos de la sala:", data, "error:", error);
-    if (error) throw error;
-    const node = data[0];
+    
+    // ✅ MEJOR VALIDACIÓN
+    if (error) {
+      throw new Error(error.message);
+    }
+    
+    // Validar que data existe y tiene contenido
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      const notFoundError = new Error('SALA_NOT_FOUND');
+      throw notFoundError;
+    }
+
+    // Soportar tanto array como objeto directo
+    const node = Array.isArray(data) ? data[0] : data;
+    
+    // Validar que el nodo tiene la propiedad esperada
+    if (!node || !node.dispin) {
+      const notFoundError = new Error('SALA_NOT_FOUND');
+      throw notFoundError;
+    }
+    
     console.log("DISPIN:", node.dispin);
-    handleResult1(node);
+    handleDatos(node);
 
     const piezasData = await gqlQuery(QUERY_PIEZAS_POR_JUEGO, { juegoId: node.juego_id });
     const piezas = piezasData.piezaTipoCollection.edges.map(e => e.node);
     console.log("2. piezas (formato BD):", piezas);
     const mapping: Record<string, number> = {};
     piezas.forEach((p, i) => { mapping[p.codigo] = i; });
-    handleResult4(mapping);  
+    handleCodigoToIndex(mapping);  
     
     const pieceTypes: PieceType[] = piezas.map(p => ({
       name:         p.simbolo,
       simbolo:      p.simbolo,
       imageUrl:     p.img_url === 'https://placehold.co/100x100' 
-      ? `https://placehold.co/100x100?text=${p.simbolo}`
-      : p.img_url,
+        ? `https://placehold.co/100x100?text=${p.simbolo}`
+        : p.img_url,
       moves:        typeof p.movimientos === 'string' ? JSON.parse(p.movimientos) : (p.movimientos ?? []),
       captura_modo: p.cm,
     }));
     console.log("3. pieceTypes:", pieceTypes);
-    handleResult3(pieceTypes);
-
+    handlePiezaTypes(pieceTypes);
     const playState = mapSalaToPlayState(node, piezas);
     console.log("4. playState:", playState);
-    handleResult2(playState);
+    handleFase(playState);
   } catch (err) {
-    console.log("ERROR:", err);
-    handleError(err.message);
+    console.error("ERROR en selectLudiSalaByCode:", err);
+    handleError(err instanceof Error ? err.message : String(err));
   } finally {
     Espera(false);
   }
@@ -136,14 +154,15 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 }
 
 
-export const createRoomwithGameIL = async (localId, nombre, alto, ancho, fichero ,dispin, codigo, victconds, handleResult:Function)=>{
+export const createRoomwithGameIL = async ( p_nombre, p_alto, p_ancho, p_piezas, p_dispin, p_codigo, p_condiciones, handleResult:Function)=>{
   try{
-    console.log("Creando sala con codigo", codigo);
-    console.log(nombre, alto, ancho)
-    const {data, error} = await supabase.rpc("create_room_with_game_il", {p_nombre: nombre, p_alto:alto, p_ancho:ancho, p_piezas:fichero ,p_codigo:codigo, p_ip:'1', p_dispin: dispin, p_condiciones: victconds});
+    console.log("Creando sala con codigo", p_codigo);
+    console.log(p_nombre, p_alto, p_ancho)
+    const {data, error} = await supabase.rpc("create_room_with_game_il", 
+      {p_nombre, p_alto, p_ancho, p_piezas, p_ip:'1', p_dispin, p_condiciones});
     handleResult(data);
-    console.log('dispin', dispin);
-    console.log('fichero', fichero);
+    console.log('dispin', p_dispin);
+    console.log('fichero', p_piezas);
 
     console.log('data', data);
     console.log('error', error);
@@ -165,7 +184,7 @@ export const SendRoomData = async (alt:number, anc:number, dispin, fichero: Piec
         window.open(`/sala/${codSala}`, "_blank", "noopener,noreferrer");
       }
 
-      createRoomwithGameIL(creatorId, 'juego',alt, anc, ficher, dispin ,codSala, victconds, ventana );
+      createRoomwithGameIL( 'juego',alt, anc, ficher, dispin ,codSala, victconds, ventana );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import CloseButton from '@/components/ui/mini/closeButton';
+import { useLocation, useNavigate } from "react-router-dom";
 import { BoardPiece, PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
@@ -23,8 +24,23 @@ const LudiSala = () => {
   const { roomCode } = useParams();
   const [localId, setLocalId] = useState<string | null>(null);
   const [myPosition, setMyPosition] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+
   const cargarSala = () => {
-    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, setError);
+    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, (err) => {
+      console.error('Error al cargar sala:', err);
+      if (err === 'SALA_NOT_FOUND') {  // ← Compara directamente contra el string
+        navigate('/404', { 
+          state: { 
+            error: 'room-not-found',
+            details: `Room code: ${roomCode}`
+          } 
+        });
+      } else {
+        setError(err);
+      }
+    });  
   }
 
   const actualizarJugadores = (nuevoContador: number) => {
@@ -48,7 +64,6 @@ const LudiSala = () => {
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState();
       const userIds = Object.keys(state);
-    
       setUsers(userIds);
     });
 
@@ -64,7 +79,7 @@ const LudiSala = () => {
 
     return () => { supabase.removeChannel(channel); };  // cleanup
 
-  }, [roomCode, localId]);
+  }, [roomCode, localId, navigate]);
 
   // useEffect 2: cargar jugadores iniciales y listar
   useEffect(() => {
@@ -239,5 +254,4 @@ const LudiSala = () => {
     </div>
   )
 }
-
-export default LudiSala
+export default LudiSala 

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { BoardPiece, PieceType, Position } from "@/types/game";
+import { useEffect, useRef, useState } from "react";
 
 interface BoardGridProps {
     rows: number;
@@ -19,6 +20,39 @@ interface BoardGridProps {
     winner = null, onCellClick
   }: BoardGridProps) {
     const cellSize = Math.min(Math.floor(600 / Math.max(rows, cols)), 64);
+    const [movedFromCell, setMovedFromCell] = useState<string | null>(null);
+    const prevPiecesRef = useRef<BoardPiece[]>([]);
+  
+    // Detectar qué pieza se movió
+    useEffect(() => {
+      let moved: string | null = null;
+      
+      pieces.forEach(newPiece => {
+        // Buscar si esta pieza está en diferente posición
+        const oldPiece = prevPiecesRef.current.find(p => 
+          p.player === newPiece.player && 
+          p.pieceTypeIndex === newPiece.pieceTypeIndex &&
+          (p.row !== newPiece.row || p.col !== newPiece.col)
+        );
+        
+        if (oldPiece) {
+          // Recordar de dónde vino
+          moved = `${oldPiece.row}-${oldPiece.col}`;
+        }
+      });
+      
+      setMovedFromCell(moved);
+      prevPiecesRef.current = pieces;
+      
+      // Limpiar después de la animación
+      if (moved) {
+        const timer = setTimeout(() => {
+          setMovedFromCell(null);
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }, [pieces]);
   
     return (
       <div className="flex-1 flex items-center justify-center p-4 relative">
@@ -38,6 +72,17 @@ interface BoardGridProps {
             const isValidMove = validMoves.some(m => m.row === row && m.col === col);
             const isSelected = selected?.row === row && selected?.col === col;
             const isTarget = targetCells.some(t => t.row === row && t.col === col);
+            
+            // Calcular si esta pieza se está animando
+            const isAnimating = piece && movedFromCell === `${piece.row}-${piece.col}`;
+            let offsetRow = 0;
+            let offsetCol = 0;
+            
+            if (isAnimating) {
+              const [oldRow, oldCol] = movedFromCell!.split('-').map(Number);
+              offsetRow = oldRow - row;
+              offsetCol = oldCol - col;
+            }
   
             return (
               <div
@@ -58,11 +103,17 @@ interface BoardGridProps {
                     alt={pt.name}
                     draggable={false}
                     className={cn(
-                      "w-4/5 h-4/5 object-contain rounded-full",
+                      "w-4/5 h-4/5 object-contain rounded-full transition-transform",
+                      isAnimating && "duration-500 ease-out",
                       piece.player === 1
                         ? "ring-2 ring-player1 bg-player1/10"
                         : "ring-2 ring-player2 bg-player2/10"
                     )}
+                    style={{
+                      transform: isAnimating 
+                        ? `translate(${offsetCol * cellSize}px, ${offsetRow * cellSize}px)`
+                        : `translate(0, 0)`,
+                    }}
                   />
                 )}
                 {isValidMove && !piece && (
