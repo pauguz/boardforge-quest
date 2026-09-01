@@ -1,6 +1,8 @@
 import { GameEditorProvider, useGameEditor } from '@/context/GameEditorContext';
 import { useGeneralEditor } from '@/context/GeneralEditorContext';
 import { exportGameAsHTML } from '@/utils/gameExport';
+import AdBanner from './AdBanner';
+
 import React, { useEffect, useState } from 'react'
 
 interface TransitionProps{
@@ -10,6 +12,8 @@ interface TransitionProps{
 
 const TransitionPage = ( {st, request=0}: TransitionProps) => {
     const [seconds, setSeconds] = useState(10);
+    const shouldShowAds = st === 1 || st === 2;
+
     const {
             boardRows, boardCols, 
             boardPieces, victoryConditions,
@@ -41,17 +45,16 @@ const TransitionPage = ( {st, request=0}: TransitionProps) => {
   
     return (
       <div className="flex flex-col items-center flex-1">
-        <h2>Tu descarga comenzará en {seconds} segundos...</h2>
+        <h2 className="text-xl font-bold">
+          Tu descarga comenzará en {seconds} segundos...
+        </h2>
         
-        {/* ESPACIO PARA EL ANUNCIO DE ADSENSE */}
-        <ins className="adsbygoogle"
-             style={{ display: 'block' }}
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-             data-ad-slot="XXXXXXXXXX"
-             data-ad-format="auto"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         
-        {/*<p>Si no inicia, <a href="URL_REAL">haz clic aquí</a>.</p>*/}
+        {shouldShowAds && (
+          <div className="w-full flex justify-center">
+            <AdBanner zoneId="6021715" />
+          </div>
+        )}
       </div>
     );
 }
