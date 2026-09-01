@@ -52,7 +52,7 @@ const TransitionPage = ( {st, request=0}: TransitionProps) => {
         
         {shouldShowAds && (
           <div className="w-full flex justify-center">
-            <AdBanner zoneId="6021715" />
+            <AdBanner adSlotId="/YOUR_PUBLISHER_ID/table-fabro.vercel.app/transition-banner" />
           </div>
         )}
       </div>

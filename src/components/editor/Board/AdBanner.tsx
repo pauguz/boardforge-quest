@@ -1,47 +1,41 @@
 // components/AdBanner.tsx
 import { useEffect } from 'react';
 
-interface AdBannerAdsterraProps {
-  zoneId: string;
+interface AdBannerProps {
+  adSlotId: string;
   className?: string;
 }
 
-const AdBannerAdsterra = ({ zoneId, className = '' }: AdBannerAdsterraProps) => {
+const AdBanner = ({ adSlotId, className = '' }: AdBannerProps) => {
   useEffect(() => {
-    // Configurar opciones de Adsterra
-    (window as any).atOptions = {
-      'key': zoneId,
-      'format': 'iframe',
-      'height': 250,
-      'width': 300,
-      'params': {}
-    };
-
-    // Cargar script de Adsterra
+    // Cargar Google Publisher Tag (GPT)
     const script = document.createElement('script');
     script.async = true;
-    script.src = '//cdn.adsterra.com/js/video_player.js';
-    document.body.appendChild(script);
+    script.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js';
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      (window as any).googletag = (window as any).googletag || { cmd: [] };
+      (window as any).googletag.cmd.push(() => {
+        (window as any).googletag.display(adSlotId);
+      });
+    };
 
     return () => {
-      // Limpiar si es necesario
       script.remove();
     };
-  }, [zoneId]);
+  }, [adSlotId]);
 
   return (
     <div 
+      id={adSlotId}
       className={`flex justify-center ${className}`}
       style={{
-        minHeight: '250px',
-        minWidth: '300px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
+        minHeight: '260px',
+        minWidth: '310px'
       }}>
-      {/* Adsterra inyectará el anuncio aquí automáticamente */}
     </div>
   );
 };
 
-export default AdBannerAdsterra;
+export default AdBanner;
