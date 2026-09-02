@@ -38,8 +38,6 @@ const LudiSala = () => {
     });  
   }
 
-
-
   const actualizarJugadores = (nuevoContador: number) => {
     setDatos(prev => ({
       ...prev,
