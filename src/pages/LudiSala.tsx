@@ -232,7 +232,6 @@ const LudiSala = () => {
             <button 
               onClick={() => {
                 unirseASala(datos, setMyPosition, setError, () => {
-                  cargarSala();
                   listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
                 }); 
               }}
