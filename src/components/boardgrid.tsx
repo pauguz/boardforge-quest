@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { BoardPiece, PieceType, Position } from "@/types/game";
+import { on } from "events";
 import { useEffect, useRef, useState } from "react";
 
 interface BoardGridProps {
@@ -12,12 +13,13 @@ interface BoardGridProps {
     targetCells?: Position[];
     winner?: number | null;
     onCellClick: (row: number, col: number) => void;
+    onVolverClick?: () => void; 
   }
   
   export function BoardGrid({ 
     rows, cols, pieces, pieceTypes,
     validMoves = [], selected = null, targetCells = [],
-    winner = null, onCellClick
+    winner = null, onCellClick, onVolverClick
   }: BoardGridProps) {
     const cellSize = Math.min(Math.floor(600 / Math.max(rows, cols)), 64);
     const [movedFromCell, setMovedFromCell] = useState<string | null>(null);
@@ -133,6 +135,12 @@ interface BoardGridProps {
               <p className="text-4xl font-bold text-primary mb-2">
                 ¡Jugador {winner} ha ganado!
               </p>
+              <button
+                onClick={() => onVolverClick && onVolverClick()}
+                className="px-4 py-2 bg-primary text-background rounded hover:bg-primary/80"
+              >
+                Volver
+              </button>
             </div>
           </div>
         )}

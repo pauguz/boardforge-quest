@@ -1,5 +1,4 @@
 import React from 'react'
-import { BoardGrid } from './BoardGrid'
 import {BoardGrid as Bg} from '@/components/boardgrid'
 import { useGeneralEditor } from '@/context/GeneralEditorContext'
 import TransitionPage from './transitionPage';
@@ -9,8 +8,8 @@ const Board = ({ st = 1, request = 0 }: any) => {
   const {status} = useGeneralEditor();
   const {
       boardRows, boardCols, boardPieces, setBoardPieces,
-      currentPlayer, isPlaying, playState, handlePlayClick, victoryConditions,
-      
+      currentPlayer, isPlaying, setIsPlaying, playState, handlePlayClick, victoryConditions,
+      stopGame
     } = useGameEditor();
   const {selectedPieceTypeIndex, pieceTypes, addPieceType, }=useGeneralEditor();
 
@@ -47,6 +46,7 @@ const Board = ({ st = 1, request = 0 }: any) => {
         targetCells={targetCells}
         winner={playState?.winner}
         onCellClick={handleCellClick}
+        onVolverClick={() => stopGame() }
       />
     </>
 

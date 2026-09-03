@@ -19,6 +19,7 @@ interface GameEditorContextType {
   addVictoryCondition: (vc: VictoryCondition, j:number) => void;
   removeVictoryCondition: (j:number, i: number) => void;
   isPlaying: boolean;
+  setIsPlaying: (b: boolean) => void;
   playState: PlayState | null;
   createInitialPlayState: () => PlayState;
   startGame: () => void;
@@ -147,7 +148,7 @@ export function GameEditorProvider({ children }: { children: React.ReactNode}) {
       boardPieces, setBoardPieces,
       currentPlayer, setCurrentPlayer,
       victoryConditions, addVictoryCondition, removeVictoryCondition,
-      isPlaying, playState, createInitialPlayState, startGame, stopGame, handlePlayClick, getBoardPieceTypes: getBoardPieceTypes
+      isPlaying, setIsPlaying, playState, createInitialPlayState, startGame, stopGame, handlePlayClick, getBoardPieceTypes: getBoardPieceTypes
     }}>
       {children}
     </Ctx.Provider>
