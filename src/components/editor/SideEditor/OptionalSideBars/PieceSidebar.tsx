@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { useGameEditor } from "@/context/GameEditorContext";
 import { useGeneralEditor } from "@/context/GeneralEditorContext";
-
 import { Button } from "@/components/ui/mini/button";
 import { CreatePieceDialog } from "../Dialogs/CreatePieceDialog";
 import {ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem,} from "@/components/ui/context-menu";
@@ -9,6 +8,7 @@ import { PieceParametersDialog } from "../Dialogs/PieceParametersDialog";
 import { PieceTestDialog } from "../Dialogs/PieceTestDialog";
 import { Plus } from "lucide-react";
 import SideItem from "./SideItem";
+import { UploadModeDialog } from "../Dialogs/UploadModalDialog";
 import { cn } from "@/lib/utils";
 
 export function PieceSidebar() {
@@ -69,25 +69,25 @@ export function PieceSidebar() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {pieceTypes.map((pt, ind) => (
-          <ContextMenu key={ind}>
+        {pieceTypes.map((pt, index) => (
+          <ContextMenu key={index}>
             <ContextMenuTrigger>
               <div 
                   className={cn(
                   "rounded-md",
-                  selectedPieceTypeIndex === ind && "bg-accent ring-1 ring-primary"
+                  selectedPieceTypeIndex === index && "bg-accent ring-1 ring-primary"
                         )}>
                       <SideItem 
                         gen={pt} 
                         bloqueo={isPlaying} 
-                        remotion={()=> { removePieceType(ind)}}  
-                        selection={()=>setSelectedPieceTypeIndex(ind)} 
+                        remotion={()=> { removePieceType(index)}}  
+                        selection={()=>setSelectedPieceTypeIndex(index)} 
                         /> 
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
-              <ContextMenuItem onClick={() => {console.log(ind) ;setParamsId(ind)}}>Parámetros</ContextMenuItem>
-              <ContextMenuItem onClick={() => setTestId(ind)}>Pruebas</ContextMenuItem>
+              <ContextMenuItem onClick={() => {console.log(index) ;setParamsId(index)}}>Parámetros</ContextMenuItem>
+              <ContextMenuItem onClick={() => setTestId(index)}>Pruebas</ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
         ))  }
@@ -108,12 +108,13 @@ export function PieceSidebar() {
         </div>
       )}
 
-    <CreatePieceDialog open={showNameDialog} 
+    <CreatePieceDialog 
+            open={showNameDialog} 
             onOpenChange={setShowNameDialog}
             imageUrl={pendingImage}
             imageName={pendingName}
             onConfirm={handleCreate}
-          />
+      />
 
       <PieceParametersDialog 
         pieceTypeIndex={paramsId} 
