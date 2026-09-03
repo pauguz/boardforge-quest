@@ -1,14 +1,13 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 type ErrorType = '404' | 'room-not-found' | 'game-error';
 
-interface ErrorMessages {
-  title: string;
-  message: string;
+interface NotFoundProps {
+  errorType?: ErrorType;
+  roomCode?: string;
 }
 
-const errorMessages: Record<ErrorType, ErrorMessages> = {
+const errorMessages: Record<ErrorType, { title: string; message: string }> = {
   '404': {
     title: '404',
     message: '¡Uups! Página no encontrada'
@@ -23,26 +22,22 @@ const errorMessages: Record<ErrorType, ErrorMessages> = {
   }
 };
 
-const NotFound = () => {
-  const location = useLocation();
+const NotFound = ({ errorType = '404', roomCode }: NotFoundProps) => {
   const navigate = useNavigate();
-  const errorType: ErrorType = (location.state?.error as ErrorType) || '404';
   const { title, message } = errorMessages[errorType];
-
-  useEffect(() => {
-    console.error(`${errorType} Error:`, location.state?.details || location.pathname);
-  }, [location.pathname, errorType, location.state]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">{title}</h1>
-        <p className="mb-8 text-xl text-muted-foreground">{message}</p>
+        <p className="mb-8 text-xl text-muted-foreground">
+          {message}
+          {roomCode && errorType === 'room-not-found' && (
+            <div className="mt-2 text-sm">Código: <code className="bg-background px-2 py-1 rounded">{roomCode}</code></div>
+          )}
+        </p>
         <div className="flex gap-4 justify-center">
-          <button 
-            onClick={() => navigate(-1)}
-            className="text-primary underline hover:text-primary/90"
-          >
+          <button onClick={() => navigate(-1)} className="text-primary underline hover:text-primary/90">
             Volver atrás
           </button>
           <a href="/" className="text-primary underline hover:text-primary/90">

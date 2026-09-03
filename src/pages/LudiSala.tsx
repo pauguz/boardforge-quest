@@ -17,7 +17,8 @@ const LudiSala = () => {
   const [datos, setDatos] = useState<any|null>(); // Estado para guardar los resultados
   const [cargando, setCargando] = useState(true); // Estado para el indicador de carga
   const [error, setError] = useState(null);
-  const [fase, setFase] = useState<PlayState|null>();
+  const [dispin, setDispin] = useState<PlayState|null>();
+  const [disposicion, setDisposicion] = useState<PlayState|null>();
   const [piezaTypes, setPiezaTypes] = useState<PieceType[]>([]);
   const [isCreator, setIsCreator] = useState<boolean>(false);
   const [codigoToIndex, setCodigoToIndex] = useState<Record<string, number>>({});
@@ -28,14 +29,7 @@ const LudiSala = () => {
   const navigate = useNavigate();
 
   const cargarSala = () => {
-    selectLudiSalaByCode(roomCode, setCargando, setDatos, setFase, setPiezaTypes, setCodigoToIndex, (err) => {
-      console.error('Error al cargar sala:', err);
-      if (err === 'SALA_NOT_FOUND') {  // ← Compara directamente contra el string
-          setError('room-not-found');  // ← Solo setea el error, sin navegar
-      } else {
-        setError(err);
-      }
-    });  
+    selectLudiSalaByCode(roomCode, setCargando, setDatos, setDispin, setPiezaTypes, setCodigoToIndex, setError);
   }
 
   const actualizarJugadores = (nuevoContador: number) => {
@@ -48,6 +42,14 @@ const LudiSala = () => {
   useEffect(() => {
     getOrCreateAnonymousUser().then(setLocalId);
   }, []);
+
+  useEffect(() => {
+    if (dispin) {
+      setDisposicion(dispin);
+    } else {
+      setDisposicion(null);
+    }
+  }, [dispin]);
 
   // useEffect 1: canal de presence y realtime (solo se crea una vez con localId)
   useEffect(() => {
@@ -148,7 +150,7 @@ const LudiSala = () => {
           col: entry.col,
         }));
 
-        setFase(prev => ({
+        setDisposicion(prev => ({
           ...prev!,
           pieces,
           turn: nuevaPartida.turn,
@@ -168,15 +170,7 @@ const LudiSala = () => {
 
   if (!datos || cargando) return <div>Cargando...</div>;
 
-  // Mostrar error si existe
-  if (error) {
-    return (
-      <NotFound 
-        errorType={error === 'room-not-found' ? 'room-not-found' : 'game-error'}
-        roomCode={roomCode}
-      />
-    );
-  }
+ 
   //console.log('El ID local ', localId)
   console.log("Es creador ", isCreator);
   const {alto:al, ancho:an, magnitud:mag}=datos;
@@ -185,26 +179,26 @@ const LudiSala = () => {
   console.log('magnitud y jugadores actuales: ', mag, datos.jugadores_actuales);
  
   const handleCellClick = async (row: number, col: number) => {
-    if (!fase || fase.winner) return;
-    if (!myPosition || myPosition !== fase.turn) return;
+    if (!disposicion || disposicion.winner) return;
+    if (!myPosition || myPosition !== disposicion.turn) return;
   
     // selección
-    if (!fase.selected) {
-      const piece = fase.pieces.find(p => p.row === row && p.col === col && p.player === myPosition);
+    if (!disposicion.selected) {
+      const piece = disposicion.pieces.find(p => p.row === row && p.col === col && p.player === myPosition);
       if (!piece) return;
       const pt = piezaTypes[piece.pieceTypeIndex];
       if (!pt) return;
-      const { moves } = getValidMoves(piece, pt, fase.pieces, alto, ancho);
-      setFase({ ...fase, selected: { row, col }, validMoves: moves });
+      const { moves } = getValidMoves(piece, pt, disposicion.pieces, alto, ancho);
+      setDisposicion({ ...disposicion, selected: { row, col }, validMoves: moves });
       return;
     }
   
     // movimiento
-    if (fase.validMoves.some(m => m.row === row && m.col === col)) {
+    if (disposicion.validMoves.some(m => m.row === row && m.col === col)) {
       const { data, error } = await supabase.rpc('hacer_movimiento', {
         p_sala_id: datos.sala_id,
-        p_from_row: fase.selected.row,
-        p_from_col: fase.selected.col,
+        p_from_row: disposicion.selected.row,
+        p_from_col: disposicion.selected.col,
         p_to_row: row,
         p_to_col: col,
       });
@@ -216,7 +210,7 @@ const LudiSala = () => {
   
       console.log('Resultado movimiento:', data);
     } else {
-      setFase({ ...fase, selected: null, validMoves: [] });
+      setDisposicion({ ...disposicion, selected: null, validMoves: [] });
     }
   };
   return (
@@ -246,12 +240,20 @@ const LudiSala = () => {
       <BoardGrid
         rows={alto}
         cols={ancho}
-        pieces={fase?.pieces ?? []}
+        pieces={disposicion?.pieces ?? []}
         pieceTypes={piezaTypes}  
-        validMoves={fase?.validMoves}
-        selected={fase?.selected}
-        winner={fase?.winner}
+        validMoves={disposicion?.validMoves}
+        selected={disposicion?.selected}
+        winner={disposicion?.winner}
         onCellClick={handleCellClick}
+        onVolverClick={() => {setDisposicion(dispin); 
+                              setMyPosition(null);
+                              setDatos(prev => ({
+                                ...prev,
+                                enjuego: '0',
+                                jugadores_actuales: 0
+                              }));
+                            }}
       />
     </div>
   )

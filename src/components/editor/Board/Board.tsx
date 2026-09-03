@@ -11,7 +11,7 @@ const Board = ({ st = 1, request = 0 }: any) => {
       currentPlayer, isPlaying, setIsPlaying, playState, handlePlayClick, victoryConditions,
       stopGame
     } = useGameEditor();
-  const {selectedPieceTypeIndex, pieceTypes, addPieceType, }=useGeneralEditor();
+  const {selectedPieceTypeIndex, pieceTypes, addPieceType }=useGeneralEditor();
 
   const handleCellClick = (row: number, col: number) => {
     if (isPlaying) {
