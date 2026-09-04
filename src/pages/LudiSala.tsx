@@ -5,7 +5,7 @@ import { BoardPiece, PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
-import {verifyAuthorship, deleteRoom, selectLudiSalaByCode, unirseASala, listarJugadoresSala } from '../services/salaService.ts'
+import {verifyAuthorship, deleteRoom, unirseASala, listarJugadoresSala } from '../services/salaService.ts'
 import { BoardGrid } from '@/components/BoardGrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
@@ -156,7 +156,6 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
   }, [localId, datos?.sala_id, codigoToIndex]);
 
 
- 
   //console.log('El ID local ', localId)
   console.log("Es creador ", isCreator);
   const {alto:al, ancho:an, magnitud:mag}=datos;
