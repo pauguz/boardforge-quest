@@ -3,7 +3,7 @@ import Index from "../pages/Index";
 import NotFound from "../pages/NotFound";
 import Ayuda from "../pages/Ayuda";
 import Editor from '@/pages/Editor';
-import LudiSala from '@/pages/LudiSala';
+import AnteSala from '@/pages/AnteSala';
 
 
 
@@ -14,8 +14,7 @@ const GenRouter = () => {
       <Route path="/" element={<Index />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/ayuda" element={<Ayuda />}/>
-      <Route path="/sala/:roomCode" element={<LudiSala />}/>
-      
+      <Route path="/sala/:roomCode" element={<AnteSala />}/>
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>

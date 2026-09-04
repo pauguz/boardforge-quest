@@ -6,31 +6,32 @@ import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
 import {verifyAuthorship, deleteRoom, selectLudiSalaByCode, unirseASala, listarJugadoresSala } from '../services/salaService.ts'
-import { BoardGrid } from '@/components/boardgrid.tsx';
+import { BoardGrid } from '@/components/BoardGrid.tsx';
 import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 import { getValidMoves } from '@/utils/movement.ts';
 import NotFound from './NotFound.tsx';
+import { setupJugadoresListener } from '@/services/juegoService.ts';
 
-const LudiSala = () => {
+interface LudiSalaProps {
+  datos: any;
+  setDatos: React.Dispatch<React.SetStateAction<any>>;
+  dispin: PlayState | null;
+  piezaTypes: PieceType[];
+  codigoToIndex: Record<string, number>;
+}
 
-  const [datos, setDatos] = useState<any|null>(); // Estado para guardar los resultados
-  const [cargando, setCargando] = useState(true); // Estado para el indicador de carga
+const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaProps) => {
+
   const [error, setError] = useState(null);
-  const [dispin, setDispin] = useState<PlayState|null>();
   const [disposicion, setDisposicion] = useState<PlayState|null>();
-  const [piezaTypes, setPiezaTypes] = useState<PieceType[]>([]);
   const [isCreator, setIsCreator] = useState<boolean>(false);
-  const [codigoToIndex, setCodigoToIndex] = useState<Record<string, number>>({});
   const [users, setUsers] = useState<string[]>([]);
   const { roomCode } = useParams();
   const [localId, setLocalId] = useState<string | null>(null);
   const [myPosition, setMyPosition] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  const cargarSala = () => {
-    selectLudiSalaByCode(roomCode, setCargando, setDatos, setDispin, setPiezaTypes, setCodigoToIndex, setError);
-  }
 
   const actualizarJugadores = (nuevoContador: number) => {
     setDatos(prev => ({
@@ -72,7 +73,6 @@ const LudiSala = () => {
       });
 
     verifyAuthorship(roomCode, localId, setIsCreator, setError);
-    cargarSala();
 
     return () => { supabase.removeChannel(channel); };  // cleanup
 
@@ -87,30 +87,17 @@ const LudiSala = () => {
   // useEffect 3: realtime del contador de jugadores (tabla jugador)
   useEffect(() => {
     if (!localId || !datos?.sala_id) return;
-    const jugadorChannel = supabase.channel(`jugadores:${datos.sala_id}`);
-
-    jugadorChannel.on(
-      'postgres_changes',
-      {
-        event: '*', // INSERT, UPDATE, DELETE
-        schema: 'public',
-        table: 'jugador',
-        filter: `sala_id=eq.${datos.sala_id}`,
-      },
-      (payload) => {
-        console.log('👥 CAMBIO EN JUGADORES:', payload);
-        // Recargar lista completa de jugadores
+    
+    const channel = setupJugadoresListener(supabase, datos.sala_id, datos, localId, {
+      onJugadorChange: () => {
         listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
       }
-    ).subscribe((status) => {
-      console.log('📡 JUGADORES CHANNEL STATUS:', status);
     });
-
+  
     return () => {
-      supabase.removeChannel(jugadorChannel);
+      supabase.removeChannel(channel);  // Sin await
     };
   }, [localId, datos?.sala_id]);
-
   // useEffect 4: realtime del tablero (tabla partida)
   // También detecta cuándo comienza la partida
   useEffect(() => {
@@ -168,7 +155,6 @@ const LudiSala = () => {
     };
   }, [localId, datos?.sala_id, codigoToIndex]);
 
-  if (!datos || cargando) return <div>Cargando...</div>;
 
  
   //console.log('El ID local ', localId)
