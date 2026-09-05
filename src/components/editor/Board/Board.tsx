@@ -1,5 +1,5 @@
 import React from 'react'
-import {BoardGrid as Bg} from '@/components/boardgrid'
+import {BoardGrid as Bg} from '@/components/BoardGrid'
 import { useGeneralEditor } from '@/context/GeneralEditorContext'
 import TransitionPage from './transitionPage';
 import { useGameEditor } from '@/context/GameEditorContext';
