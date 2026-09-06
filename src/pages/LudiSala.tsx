@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import CloseButton from '@/components/ui/mini/closeButton';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BoardPiece, PieceType, PlayState } from '@/types/game';
 import { useParams } from "react-router-dom";
 import { supabase } from '@/utils/supabaseClient';
 import { cn } from '@/lib/utils';
 import {verifyAuthorship, deleteRoom, unirseASala, listarJugadoresSala } from '../services/salaService.ts'
 import { BoardGrid } from '@/components/BoardGrid.tsx';
-import { incremento, localInt } from '@/utils/roomCode.ts';
 import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 import { getValidMoves } from '@/utils/movement.ts';
-import NotFound from './NotFound.tsx';
 import { setupJugadoresListener } from '@/services/juegoService.ts';
 import { setupPresenceChannel } from '@/services/presenceService.ts';
 import SalaHeader from '@/components/sala/SalaHeader.tsx';
