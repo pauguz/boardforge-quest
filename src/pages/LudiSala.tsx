@@ -12,6 +12,8 @@ import { getOrCreateAnonymousUser } from '@/utils/auth.ts';
 import { getValidMoves } from '@/utils/movement.ts';
 import NotFound from './NotFound.tsx';
 import { setupJugadoresListener } from '@/services/juegoService.ts';
+import { setupPresenceChannel } from '@/services/presenceService.ts';
+import SalaHeader from '@/components/sala/SalaHeader.tsx';
 
 interface LudiSalaProps {
   datos: any;
@@ -55,25 +57,12 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
   // useEffect 1: canal de presence y realtime (solo se crea una vez con localId)
   useEffect(() => {
     if (!localId) return;
-    const channel = supabase.channel(`room:${roomCode}`, {
-      config: { presence: { key: localId } }
-    });
-
-    channel.on("presence", { event: "sync" }, () => {
-      const state = channel.presenceState();
-      const userIds = Object.keys(state);
-      setUsers(userIds);
-    });
-
-    channel.subscribe(async () => {
-      await channel.track({
-        localId,
-        joined_at: new Date().toISOString()
-        });
-      });
-
+    const channel = setupPresenceChannel(
+      supabase,
+      roomCode!,
+      localId,
+      setUsers)      
     verifyAuthorship(roomCode, localId, setIsCreator, setError);
-
     return () => { supabase.removeChannel(channel); };  // cleanup
 
   }, [roomCode, localId, navigate]);
@@ -200,27 +189,14 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
   };
   return (
     <div className='bg-[#e0d0b0] flex flex-col h-screen bg-background overflow-hidden"' >
-      <div>      
-        {isCreator &&  <CloseButton 
-                    onDelete={()=>{console.log('sala eliminada?'); deleteRoom(datos, localId, setError); 
-                    localStorage.setItem("salasCreadas",  incremento(localInt("salasCreadas"), -1) 
-                              ) }}/>} 
-        {datos.enjuego === '0' && (
-          <div>
-            <p>{datos.jugadores_actuales}/{mag} jugadores en la sala</p>
-            <button 
-              onClick={() => {
-                unirseASala(datos, setMyPosition, setError, () => {
-                  listarJugadoresSala(datos, localId, setMyPosition, actualizarJugadores);
-                }); 
-              }}
-              disabled={myPosition !== null || datos.jugadores_actuales >= mag}
-            >
-              {myPosition ? `Jugador ${myPosition}` : 'Unirse'}
-            </button>
-          </div>
-        )}
-      </div>
+      <SalaHeader 
+        isCreator={isCreator} 
+        datos={datos} 
+        localId={localId} 
+        mag={mag} 
+        setError={setError} 
+        myPosition={myPosition} setMyPosition={setMyPosition} 
+        actualizarJugadores={actualizarJugadores}/>
 
       <BoardGrid
         rows={alto}
