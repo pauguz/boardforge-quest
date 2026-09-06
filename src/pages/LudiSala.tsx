@@ -11,6 +11,7 @@ import { getValidMoves } from '@/utils/movement.ts';
 import { setupJugadoresListener } from '@/services/juegoService.ts';
 import { setupPresenceChannel } from '@/services/presenceService.ts';
 import SalaHeader from '@/components/sala/SalaHeader.tsx';
+import { setupPartidaListener } from '@/services/partidaService.tsx';
 
 interface LudiSalaProps {
   datos: any;
@@ -89,55 +90,24 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
   useEffect(() => {
     if (!localId || !datos?.sala_id) return;
 
-    const partidaChannel = supabase.channel(`partida:${datos.sala_id}`);
-
-    partidaChannel.on(
-      'postgres_changes',
-      {
-        event: '*', // INSERT o UPDATE
-        schema: 'public',
-        table: 'partida',
-        filter: `sala_id=eq.${datos.sala_id}`,
+    const channel = setupPartidaListener(supabase, datos.sala_id, codigoToIndex, {
+      onJuegoIniciado: () => {
+        setDatos(prev => ({ ...prev, enjuego: '1' }));
       },
-      (payload) => {
-        console.log('🔥 CAMBIO EN PARTIDA:', payload);
-        
-        const nuevaPartida = payload.new;
-        if (!nuevaPartida) return;
-
-        // Marcar que el juego comenzó (partida existe = enjuego es true)
-        setDatos(prev => ({
-          ...prev,
-          enjuego: '1'
-        }));
-
-        const tablero =
-          typeof nuevaPartida.tablero === 'string'
-            ? JSON.parse(nuevaPartida.tablero)
-            : nuevaPartida.tablero;
-
-        const pieces: BoardPiece[] = tablero.map((entry: any) => ({
-          pieceTypeIndex: codigoToIndex[entry.code] ?? 0,
-          player: entry.player,
-          row: entry.row,
-          col: entry.col,
-        }));
-
+      onPartidaChange: (updateData) => {
         setDisposicion(prev => ({
           ...prev!,
-          pieces,
-          turn: nuevaPartida.turn,
+          pieces: updateData.pieces,
+          turn: updateData.turn,
+          winner: updateData.winner,
           selected: null,
           validMoves: [],
-          winner: nuevaPartida.winner,
         }));
       }
-    ).subscribe((status) => {
-      console.log('📡 PARTIDA CHANNEL STATUS:', status);
     });
 
     return () => {
-      supabase.removeChannel(partidaChannel);
+      supabase.removeChannel(channel);
     };
   }, [localId, datos?.sala_id, codigoToIndex]);
 
@@ -196,8 +166,7 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
         actualizarJugadores={actualizarJugadores}/>
 
       <BoardGrid
-        rows={alto}
-        cols={ancho}
+        rows={alto} cols={ancho}
         pieces={disposicion?.pieces ?? []}
         pieceTypes={piezaTypes}  
         validMoves={disposicion?.validMoves}
@@ -206,8 +175,7 @@ const LudiSala = ({datos, setDatos, dispin, piezaTypes, codigoToIndex}:LudiSalaP
         onCellClick={handleCellClick}
         onVolverClick={() => {setDisposicion(dispin); 
                               setMyPosition(null);
-                              setDatos(prev => ({
-                                ...prev,
+                              setDatos(prev => ({...prev,
                                 enjuego: '0',
                                 jugadores_actuales: 0
                               }));
