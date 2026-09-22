@@ -44,7 +44,7 @@ export function PieceTestDialog({ pieceTypeIndex: pieceTypeIndex, open, onOpenCh
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <img src={pieceType.imageUrl} alt="" className="w-6 h-6 object-contain rounded" />
+            <img src={pieceType.img_url} alt="" className="w-6 h-6 object-contain rounded" />
             Probar: {pieceType.name}
           </DialogTitle>
           <DialogDescription>
@@ -71,7 +71,7 @@ export function PieceTestDialog({ pieceTypeIndex: pieceTypeIndex, open, onOpenCh
                   )}
                   style={{ width: cellSize, height: cellSize }}>
                   {isPiece && (
-                    <img src={pieceType.imageUrl} alt={pieceType.name}
+                    <img src={pieceType.img_url} alt={pieceType.name}
                       className="w-4/5 h-4/5 object-contain" draggable={false} />
                   )}
                   {isValid && !isPiece && (
