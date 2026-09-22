@@ -16,7 +16,7 @@ export interface PieceType {
   code: string;
   name: string;
   simbolo: string;
-  imageUrl: string;
+  img_url: string;
   moves: MovementRule[];
   captura_modo: CaptureMode;
 }

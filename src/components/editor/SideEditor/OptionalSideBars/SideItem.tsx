@@ -23,7 +23,7 @@ const SideItem = ({ gen, bloqueo, selection, remotion = null }: SideItemProps) =
     >
       {isPiece ? (
         <>        
-        <img src={gen.imageUrl as string} alt={gen.name} className="w-8 h-8 object-contain rounded" />
+        <img src={gen.img_url as string} alt={gen.name} className="w-8 h-8 object-contain rounded" />
         <span className="text-sm truncate flex-1">{gen.name}</span>
         </>
 

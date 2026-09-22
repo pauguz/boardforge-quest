@@ -48,7 +48,7 @@ const GeneralEditorProvider = ({ children }: { children: React.ReactNode }) => {
 
     const addPieceType = useCallback((name: string, imageUrl: string) => {
       setPieceTypes(prev => [...prev, {
-        code: crypto.randomUUID(), name, imageUrl, moves: [], captura_modo: 'ind',simbolo: name[0] 
+        code: crypto.randomUUID(), name, img_url: imageUrl, moves: [], captura_modo: 'ind',simbolo: name[0] 
       }]);
     }, []);
 

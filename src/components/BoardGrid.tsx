@@ -15,7 +15,7 @@ interface BoardGridProps {
     onCellClick: (row: number, col: number) => void;
     onVolverClick?: () => void; 
   }
-  
+
   export function BoardGrid({ 
     rows, cols, pieces, pieceTypes,
     validMoves = [], selected = null, targetCells = [],
@@ -101,7 +101,7 @@ interface BoardGridProps {
               >
                 {piece && pt && (
                   <img
-                    src={pt.imageUrl}
+                    src={pt.img_url}
                     alt={pt.name}
                     draggable={false}
                     className={cn(

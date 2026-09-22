@@ -57,7 +57,7 @@ export function PieceParametersDialog({ pieceTypeIndex: pieceTypeIndex, open, on
       <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <img src={pieceType.imageUrl} alt="" className="w-6 h-6 object-contain rounded" />
+            <img src={pieceType.img_url} alt="" className="w-6 h-6 object-contain rounded" />
             Parámetros: {pieceType.name}
           </DialogTitle>
         </DialogHeader>

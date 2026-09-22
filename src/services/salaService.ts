@@ -3,7 +3,7 @@ import {supabase} from '../utils/supabaseClient';
 
 import { PieceType } from '@/types/game';
 import { generateRoomCode, incremento, localInt} from '../utils/roomCode';
-import { base64ToBlob, ficheroToBlob, } from '@/utils/transformations';
+import { ficheroToBlob, } from '@/utils/transformations';
 import { gqlQuery } from '@/api/graphql';
 import {  QUERY_PIEZAS_POR_JUEGO } from '@/api/queries';
 import { mapSalaToPlayState } from '@/api/mappers';
@@ -58,7 +58,7 @@ export const selectLudiSalaByCode = async (
     const pieceTypes: PieceType[] = piezas.map(p => ({
       name:         p.simbolo,
       simbolo:      p.simbolo,
-      imageUrl:     p.img_url === null 
+      img_url:     p.img_url === null 
         ? `https://placehold.co/100x100?text=${p.simbolo}`
         : p.img_url,
       moves:        typeof p.movimientos === 'string' ? JSON.parse(p.movimientos) : (p.movimientos ?? []),
@@ -156,20 +156,20 @@ export const countRoomsperUser = async (localId, handleResult,handleError)=>{
 
 export const createRoomwithGameIL = async ( p_nombre, p_alto, p_ancho, p_piezas, p_dispin, p_condiciones, handleResult:Function)=>{
   try{
-    console.log(p_nombre, p_alto, p_ancho)
+    console.log('📤 Enviando a RPC:', {p_nombre, p_alto, p_ancho, p_piezas, p_dispin, p_condiciones});
+    
     const {data, error} = await supabase.rpc("create_room_with_game_il", 
-      {p_nombre, p_alto, p_ancho, p_piezas, p_ip:'1', p_dispin, p_condiciones});
+    {p_nombre, p_alto, p_ancho, p_piezas, p_ip:'1', p_dispin, p_condiciones})
+    
     handleResult(data[0]);
-    console.log('dispin', p_dispin);
-    console.log('fichero', p_piezas);
 
-    console.log('data', data);
-    console.log('error', error);
-  }catch(err){console.log(err)}
+  } catch(err) {
+    console.error('❌ CATCH ERROR:', err);
+  }
 }
 
 export const SendRoomData = async (alt:number, anc:number, dispin, fichero: PieceType[], victconds ) => {
-    const ficher= ficheroToBlob(fichero);
+    //const ficher= ficheroToBlob(fichero);
 
     const creatorId = await getOrCreateAnonymousUser();
     
@@ -182,7 +182,7 @@ export const SendRoomData = async (alt:number, anc:number, dispin, fichero: Piec
         window.open(`/sala/${data.codigo}`, "_blank", "noopener,noreferrer");
       }
 
-      createRoomwithGameIL( 'juego',alt, anc, ficher, dispin , victconds, ventana );
+      createRoomwithGameIL( 'juego',alt, anc, fichero, dispin , victconds, ventana );
       localStorage.setItem('salasCreadas', incremento(sc));
       }
 
