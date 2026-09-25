@@ -25,7 +25,6 @@ export const selectLudiSalaByCode = async (
     const { data, error } = await supabase.rpc('get_sala_by_code', { p_codigo: roomCode });
     console.log("1. datos de la sala:", data, "error:", error);
     
-    // ✅ MEJOR VALIDACIÓN
     if (error) {
       throw new Error(error.message);
     }
@@ -106,7 +105,7 @@ export const listarJugadoresSala = async (
     // Encontrar mi posición
     const yo = data.find((j: any) => j.user_id === localId);
     if (yo) {
-      console.log('🎮 Mi posición:', yo.posicion);
+      console.log(' Mi posición:', yo.posicion);
       setMyPosition(yo.posicion);
     }
   } catch (err) {
